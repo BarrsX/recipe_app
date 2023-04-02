@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'package:recipe_app/screens/home_screen.dart';
 
-Future<void> main() async {
-  await dotenv.load();
+void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
