@@ -4,8 +4,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:recipe_app/utilities/keys.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'recipe_screen.dart';
 
@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final String spoonacularApiKey = DotEnv().env['SPOONACULAR_API_KEY']!;
   List<dynamic> _meals = [];
   bool _isLoading = false;
   bool _isError = false;
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     final url = Uri.parse(
-        'https://api.spoonacular.com/recipes/complexSearch?query=$query&apiKey=$SPOONACULAR_API_KEY');
+        'https://api.spoonacular.com/recipes/complexSearch?query=$query&apiKey=$spoonacularApiKey');
 
     try {
       final response = await http.get(url);
@@ -88,7 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             filled: true,
             fillColor: Colors.grey[200],
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           ),
           onSubmitted: _searchMeals,
         ),

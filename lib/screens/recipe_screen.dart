@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +20,7 @@ class RecipeScreen extends StatefulWidget {
 }
 
 class _RecipeScreenState extends State<RecipeScreen> {
+  final String spoonacularApiKey = DotEnv().env['SPOONACULAR_API_KEY']!;
   late Map<String, dynamic> _recipe;
   bool _isLoading = true;
   bool _isError = false;
@@ -26,7 +28,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
   Future<void> _getRecipe() async {
     try {
       final url = Uri.parse(
-          'https://api.spoonacular.com/recipes/${widget.mealId}/information?apiKey=$SPOONACULAR_API_KEY');
+          'https://api.spoonacular.com/recipes/${widget.mealId}/information?apiKey=$spoonacularApiKey');
 
       final response = await http.get(url);
 
