@@ -1,16 +1,24 @@
-# recipe_app
+# Recipe App
 
-A new Flutter project.
+This Flutter app allows users to search for a meal and see the ingredients and instructions to make it.
 
-## Getting Started
+## Features
+- Search meals by typing in a query
+- Display list of meals with images and cook time
+- Tap on a meal to view a detailed recipe, including the ingredients and instructions
 
-This project is a starting point for a Flutter application.
+## Code Structure
 
-A few resources to get you started if this is your first Flutter project:
+### home_screen.dart
+The `HomeScreen` class is the main screen of the app. It contains a search bar where the user can type in a query and search for meals. When the user submits a query, the app calls the `_searchMeals` function to fetch the results from the Spoonacular API. The results are displayed in a `ListView` of `ListTile` widgets, each of which displays the meal's image, title, and cook time.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### recipe_screen.dart
+The `RecipeScreen` class displays the detailed recipe for a selected meal. It fetches the recipe from the Spoonacular API using the meal ID, and displays the ingredients and instructions in a scrollable `ListView`.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Dependencies
+The app uses the `http` package to make API requests and the `fluttertoast` package to display error messages. It also imports a `keys.dart` file that contains the API key for Spoonacular.
+
+## How to Run
+1. Clone the repository
+2. Open the project in Android Studio or VS Code
+3. Run the app on an emulator or physical device
