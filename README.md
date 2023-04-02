@@ -21,4 +21,5 @@ The app uses the `http` package to make API requests and the `fluttertoast` pack
 ## How to Run
 1. Clone the repository
 2. Open the project in Android Studio or VS Code
-3. Run the app on an emulator or physical device
+3. Insert spoonacular api key into .env file
+4. Run the app on an emulator or physical device
