@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final String spoonacularApiKey = DotEnv().env['SPOONACULAR_API_KEY']!;
+  final String spoonacularApiKey = dotenv.env['SPOONACULAR_API_KEY']!;
   List<dynamic> _meals = [];
   bool _isLoading = false;
   bool _isError = false;
@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     final url = Uri.parse(
-        'https://api.spoonacular.com/recipes/complexSearch?query=$query&apiKey=$spoonacularApiKey');
+        'https://api.spoonacular.com/recipes/complexSearch?query=$query&addRecipeInformation=true&apiKey=$spoonacularApiKey');
 
     try {
       final response = await http.get(url);

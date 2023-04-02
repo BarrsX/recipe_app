@@ -19,8 +19,8 @@ class RecipeScreen extends StatefulWidget {
 }
 
 class _RecipeScreenState extends State<RecipeScreen> {
-  final String spoonacularApiKey = DotEnv().env['SPOONACULAR_API_KEY']!;
-  late Map<String, dynamic> _recipe;
+  final String spoonacularApiKey = dotenv.env['SPOONACULAR_API_KEY']!;
+  late Map<String, dynamic> _recipe = {};
   bool _isLoading = true;
   bool _isError = false;
 
@@ -72,7 +72,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recipe'),
+        title: Text(_recipe['title'] ?? 'Recipe'),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
