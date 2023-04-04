@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:recipe_app/src/features/home/presentation/bloc/home_bloc.dart';
 
-import '../recipe/presentation/recipe_screen.dart';
+import '../../recipe/presentation/recipe_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               margin: const EdgeInsets.only(right: 16),
                               child: Image.network(
                                 // TODO: Fix this for when image is null
-                                meal['image'] ?? '',
+                                meal['image'],
                                 fit: BoxFit.cover,
                               ),
                             ),
