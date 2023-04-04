@@ -3,7 +3,7 @@ import 'package:recipe_app/src/features/recipe/domain/models/ingredient_model.da
 class Recipe {
   final int id;
   final String title;
-  final String imageUrl;
+  final String? imageUrl;
   final Map<String, String> summaryInfo;
   final List<String> relatedRecipes;
   final List<Ingredient> extendedIngredients;
