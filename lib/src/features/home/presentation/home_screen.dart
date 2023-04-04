@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:recipe_app/src/features/home/presentation/bloc/home_bloc.dart';
@@ -29,7 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Drawer(
+      child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.home),
@@ -68,14 +71,14 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.sort),
-              onPressed: () {
-                _homeBloc.ascendingOrder.add(!_homeBloc.ascendingOrder.value);
-                _homeBloc.sortMeals(_homeBloc.meals.value,
-                    _homeBloc.ascendingOrder.value ? 'asc' : 'dsc');
-              },
-            ),
+            Builder(builder: (context) {
+              return IconButton(
+                icon: const Icon(Icons.sort),
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              );
+            }),
           ],
         ),
         body: Stack(
@@ -177,6 +180,39 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ],
-        ));
+        ),
+        endDrawer: Drawer(
+          child: ListView(
+            children: [
+              const ListTile(
+                title: Text('Menu',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold)),
+              ),
+              ListTile(
+                leading: const Icon(Icons.sort),
+                title: const Text('Sort'),
+                onTap: () {
+                  _homeBloc.ascendingOrder.add(!_homeBloc.ascendingOrder.value);
+                  _homeBloc.sortMeals(_homeBloc.meals.value,
+                      _homeBloc.ascendingOrder.value ? 'asc' : 'dsc');
+                  Navigator.pop(context); // close the sidebar
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.shuffle_rounded),
+                title: const Text('Randomize'),
+                onTap: () {
+                  _homeBloc.resetSearch();
+                  Navigator.pop(context); // close the sidebar
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
