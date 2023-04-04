@@ -31,6 +31,7 @@ dependencies:
   http: ^0.13.4
   flutter_html: ^2.2.1
   flutter_dotenv: ^5.0.0
+  flutter_typeahead: ^4.3.7
   flutter:
     sdk: flutter
 

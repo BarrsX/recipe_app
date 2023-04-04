@@ -1,17 +1,15 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
-
 import 'recipe_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -21,19 +19,46 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final String spoonacularApiKey = dotenv.env['SPOONACULAR_API_KEY']!;
   List<dynamic> _meals = [];
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _isError = false;
   bool _haveSearched = false;
+  bool _ascendingOrder = true;
 
-  void _searchMeals(String query) async {
+  Future<List<String>> _getSuggestionList(String query) async {
+    final url = Uri.parse(
+        'https://api.spoonacular.com/recipes/autocomplete?number=5&query=$query&apiKey=$spoonacularApiKey');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as List;
+        final suggestions = data.map((obj) => obj['title'] as String).toList();
+
+        return suggestions;
+      } else {
+        print('Error: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+    return [];
+  }
+
+  Future<void> _loadOrSearchMeals([String query = '']) async {
+    final url = query.isEmpty
+        ? Uri.parse(
+            'https://api.spoonacular.com/recipes/random?number=15&addRecipeInformation=true&apiKey=$spoonacularApiKey')
+        : Uri.parse(
+            'https://api.spoonacular.com/recipes/complexSearch?query=$query&addRecipeInformation=true&apiKey=$spoonacularApiKey');
+
+    String mealKey = query.isEmpty ? 'recipes' : 'results';
+
     setState(() {
       _isLoading = true;
-      _isError = false; // add this line to reset when retrying
+      _isError = false;
       _haveSearched = true;
     });
-
-    final url = Uri.parse(
-        'https://api.spoonacular.com/recipes/complexSearch?query=$query&addRecipeInformation=true&apiKey=$spoonacularApiKey');
 
     try {
       final response = await http.get(url);
@@ -42,9 +67,19 @@ class _HomeScreenState extends State<HomeScreen> {
         final data = jsonDecode(response.body);
 
         setState(() {
-          _meals = data['results'];
+          _meals = data[mealKey];
           _isLoading = false;
         });
+
+        if (_ascendingOrder) {
+          _meals.sort((a, b) {
+            return a['readyInMinutes'].compareTo(b['readyInMinutes']);
+          });
+        } else {
+          _meals.sort((a, b) {
+            return b['readyInMinutes'].compareTo(a['readyInMinutes']);
+          });
+        }
       } else {
         print('Error: ${response.statusCode} ${response.body}');
         setState(() {
@@ -71,30 +106,77 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _resetSearch() {
+    _searchController.clear();
+    _loadOrSearchMeals();
+  }
+
+  @override
+  void initState() {
+    _loadOrSearchMeals();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            hintText: 'Search meals',
-            hintStyle: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[500],
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide.none,
-            ),
-            filled: true,
-            fillColor: Colors.grey[200],
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          ),
-          onSubmitted: _searchMeals,
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: _resetSearch,
         ),
+        title: TypeAheadField(
+          textFieldConfiguration: TextFieldConfiguration(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search meals',
+              hintStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[500],
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.grey[200],
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            ),
+            onSubmitted: _loadOrSearchMeals,
+          ),
+          suggestionsCallback: _getSuggestionList,
+          itemBuilder: (context, String suggestion) {
+            return ListTile(
+              title: Text(suggestion),
+            );
+          },
+          onSuggestionSelected: (String suggestion) {
+            _searchController.text = suggestion;
+            _loadOrSearchMeals(suggestion);
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.sort),
+            onPressed: () {
+              setState(() {
+                _ascendingOrder = !_ascendingOrder;
+
+                if (_ascendingOrder) {
+                  _meals.sort((a, b) {
+                    return a['readyInMinutes'].compareTo(b['readyInMinutes']);
+                  });
+                } else {
+                  _meals.sort((a, b) {
+                    return b['readyInMinutes'].compareTo(a['readyInMinutes']);
+                  });
+                }
+              });
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: <Widget>[
@@ -161,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      _searchMeals(_searchController.text); // retry
+                      _loadOrSearchMeals(_searchController.text);
                     },
                     child: const Text('Retry'),
                   ),
