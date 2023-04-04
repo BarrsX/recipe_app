@@ -44,6 +44,12 @@ class _RecipeViewState extends State<RecipeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: BlocBuilder<RecipeBloc, RecipeState>(
         builder: (context, state) {
           if (state is RecipeInitState) {
@@ -86,7 +92,7 @@ class _RecipeViewState extends State<RecipeView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Image.network(
-            recipe.imageUrl,
+            recipe.imageUrl ?? 'https://media.istockphoto.com/photos/food-for-healthy-brain-picture-id1299079243?b=1&k=20&m=1299079243&s=612x612&w=0&h=0nD8xtP3eNikgVuP955dLLwXw1Ch6l1uH4nqcYB8e9I=',
             height: 300,
             fit: BoxFit.cover,
           ),
