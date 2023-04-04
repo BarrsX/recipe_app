@@ -44,6 +44,12 @@ class _RecipeViewState extends State<RecipeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: BlocBuilder<RecipeBloc, RecipeState>(
         builder: (context, state) {
           if (state is RecipeInitState) {
