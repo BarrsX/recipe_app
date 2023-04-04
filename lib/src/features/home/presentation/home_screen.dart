@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.bold)),
               ),
               ListTile(
-                leading: const Icon(Icons.arrow_drop_up),
+                leading: const Icon(Icons.arrow_upward_rounded),
                 title: const Text('Sort'),
                 onTap: () {
                   _homeBloc.ascendingOrder.add(!_homeBloc.ascendingOrder.value);
