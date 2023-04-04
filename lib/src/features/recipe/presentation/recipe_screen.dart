@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/src/features/recipe/domain/models/ingredient_model.dart';
+import 'package:recipe_app/src/features/recipe/domain/models/recipe_model.dart';
 
 import 'bloc/recipe_bloc.dart';
 import 'bloc/recipe_event.dart';
@@ -10,7 +12,6 @@ class RecipeScreen extends StatelessWidget {
   final int mealId;
 
   const RecipeScreen(this.mealId, {Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -58,7 +59,7 @@ class _RecipeViewState extends State<RecipeView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'An error occurred',
+                  state.errorMessage,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 16),
@@ -78,17 +79,14 @@ class _RecipeViewState extends State<RecipeView> {
     );
   }
 
-  Widget _buildRecipeView(
-      Map<String, dynamic> recipe,
-      Map<String, String> recipeSummary,
-      List<String> relatedRecipes,
-      BuildContext context) {
+  Widget _buildRecipeView(Recipe recipe, Map<String, String> recipeSummary,
+      List<String> relatedRecipes, BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Image.network(
-            recipe['image'],
+            recipe.imageUrl,
             height: 300,
             fit: BoxFit.cover,
           ),
@@ -99,7 +97,7 @@ class _RecipeViewState extends State<RecipeView> {
               children: [
                 Center(
                   child: Text(
-                    recipe['title'],
+                    recipe.title,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),
@@ -145,24 +143,25 @@ class _RecipeViewState extends State<RecipeView> {
                     SizedBox(
                       height: 400,
                       child: ListView.builder(
-                        itemCount: recipe['extendedIngredients'].length,
+                        itemCount: recipe.extendedIngredients.length,
                         itemBuilder: (BuildContext context, int index) {
-                          var ingredient = recipe['extendedIngredients'][index];
-                          final hasImage = ingredient.containsKey('image');
+                          Ingredient ingredient =
+                              recipe.extendedIngredients[index];
+                          final hasImage = ingredient.image != null;
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 2.0),
                             child: ListTile(
                               leading: hasImage
                                   ? CircleAvatar(
                                       backgroundImage: NetworkImage(
-                                          'https://spoonacular.com/cdn/ingredients_100x100/${ingredient['image']}'),
+                                          'https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}'),
                                     )
                                   : null,
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    ingredient['name'],
+                                    ingredient.name!,
                                     style:
                                         Theme.of(context).textTheme.titleMedium,
                                   ),
@@ -172,7 +171,7 @@ class _RecipeViewState extends State<RecipeView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    ingredient['original'],
+                                    ingredient.original!,
                                     style:
                                         Theme.of(context).textTheme.bodySmall,
                                   ),
@@ -208,30 +207,23 @@ class _RecipeViewState extends State<RecipeView> {
                             child: SizedBox(
                               height: 500,
                               child: ListView.builder(
-                                itemCount: recipe['analyzedInstructions']
-                                            .toString() ==
-                                        '[]'
+                                itemCount: recipe.analyzedInstructions.isEmpty
                                     ? 0
-                                    : recipe['analyzedInstructions'][0]['steps']
-                                        .length,
+                                    : recipe.analyzedInstructions.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  final step = recipe['analyzedInstructions']
-                                              .toString() ==
-                                          '[]'
-                                      ? 'N/A'
-                                      : recipe['analyzedInstructions'][0]
-                                          ['steps'][index];
+                                  Instruction instruction =
+                                      recipe.analyzedInstructions[index];
                                   return ListTile(
                                     leading: CircleAvatar(
                                       child: Text(
-                                        step['number'].toString(),
+                                        instruction.number.toString(),
                                         style: const TextStyle(
                                           color: Colors.white,
                                         ),
                                       ),
                                     ),
                                     title: Text(
-                                      step['step'],
+                                      instruction.step ?? '',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium,
