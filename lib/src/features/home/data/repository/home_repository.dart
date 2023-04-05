@@ -59,8 +59,8 @@ class HomeRepository {
         isLoading.add(false);
 
         ascendingOrder.value
-            ? sortMeals(mealsList, 'asc')
-            : sortMeals(mealsList, 'dsc');
+            ? _sortMeals(mealsList, 'asc')
+            : _sortMeals(mealsList, 'dsc');
       } else {
         print('Error: ${response.statusCode} ${response.body}');
         isLoading.add(false);
@@ -73,7 +73,7 @@ class HomeRepository {
     }
   }
 
-  void sortMeals(List<Recipe> mealsList, String order) {
+  void _sortMeals(List<Recipe> mealsList, String order) {
     if (order == 'asc') {
       mealsList.sort((a, b) {
         return a.readyInMinutes?.compareTo(b.readyInMinutes as int) as int;

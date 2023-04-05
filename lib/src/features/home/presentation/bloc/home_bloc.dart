@@ -21,8 +21,8 @@ class HomeBloc {
   }
 
   Future<void> loadOrSearchMeals([String query = '']) async {
-    await _homeRepository.loadOrSearchMeals(query, spoonacularApiKey, meals,
-        isLoading, isError, ascendingOrder);
+    await _homeRepository.loadOrSearchMeals(
+        query, spoonacularApiKey, meals, isLoading, isError, ascendingOrder);
   }
 
   void resetSearch() {
