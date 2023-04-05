@@ -1,10 +1,11 @@
+import 'package:recipe_app/src/features/recipe/domain/models/recipe.dart';
+
 import '../../../recipe/presentation/recipe_screen.dart';
-import '../../domain/models/meal_model.dart';
 import 'package:flutter/material.dart';
 import '../bloc/home_bloc.dart';
 
 class MealListView extends StatelessWidget {
-  final List<Meal> meals;
+  final List<Recipe> meals;
   final HomeBloc homeBloc;
 
   const MealListView({Key? key, required this.meals, required this.homeBloc}) : super(key: key);
@@ -31,7 +32,7 @@ class MealListView extends StatelessWidget {
                 ),
               ),
               title: Text(
-                meal.title,
+                meal.title ?? 'No Title',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
