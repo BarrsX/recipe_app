@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:recipe_app/src/features/home/presentation/bloc/home_bloc.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter/material.dart';
 
 import '../../recipe/presentation/recipe_screen.dart';
-import '../domain/models/meal_model.dart';
+import '../../recipe/domain/models/recipe.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Stack(
           children: [
-            StreamBuilder<List<Meal>>(
+            StreamBuilder<List<Recipe>>(
               stream: _homeBloc.meals,
               builder: (context, snapshot) {
                 if (snapshot.hasData &&
@@ -103,13 +103,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 80,
                               margin: const EdgeInsets.only(right: 16),
                               child: Image.network(
-                                meal.image ??
-                                    'https://media.istockphoto.com/photos/food-for-healthy-brain-picture-id1299079243?b=1&k=20&m=1299079243&s=612x612&w=0&h=0nD8xtP3eNikgVuP955dLLwXw1Ch6l1uH4nqcYB8e9I=',
+                                meal.image ?? '',
                                 fit: BoxFit.cover,
                               ),
                             ),
                             title: Text(
-                              meal.title,
+                              meal.title ?? 'No Title',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -197,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _homeBloc.ascendingOrder.add(!_homeBloc.ascendingOrder.value);
                   _homeBloc.sortMeals(_homeBloc.meals.value,
                       _homeBloc.ascendingOrder.value ? 'asc' : 'dsc');
-                  Navigator.pop(context); // close the sidebar
+                  Navigator.pop(context);
                 },
               ),
               ListTile(
@@ -205,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: const Text('Randomize'),
                 onTap: () {
                   _homeBloc.resetSearch();
-                  Navigator.pop(context); // close the sidebar
+                  Navigator.pop(context);
                 },
               ),
             ],
