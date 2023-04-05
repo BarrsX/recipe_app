@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 import '../../recipe/presentation/recipe_screen.dart';
 import '../../recipe/domain/models/recipe.dart';
 
+import 'widgets/search_field.dart';
+import 'widgets/meal_list_view.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final HomeBloc _homeBloc = HomeBloc();
@@ -37,38 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.home),
             onPressed: _homeBloc.resetSearch,
           ),
-          title: TypeAheadField(
-            textFieldConfiguration: TextFieldConfiguration(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search meals',
-                hintStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.grey[200],
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              ),
-              onSubmitted: _homeBloc.loadOrSearchMeals,
-            ),
-            suggestionsCallback: _homeBloc.getSuggestionList,
-            itemBuilder: (context, String suggestion) {
-              return ListTile(
-                title: Text(suggestion),
-              );
-            },
-            onSuggestionSelected: (String suggestion) {
-              _searchController.text = suggestion;
-              _homeBloc.loadOrSearchMeals(suggestion);
-            },
-          ),
+          title: SearchField(searchController: _searchController, homeBloc: _homeBloc),
           actions: [
             Builder(builder: (context) {
               return IconButton(
@@ -88,47 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (snapshot.hasData &&
                     snapshot.data != null &&
                     snapshot.data!.isNotEmpty) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        final meal = snapshot.data![index];
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          child: ListTile(
-                            leading: Container(
-                              width: 80,
-                              height: 80,
-                              margin: const EdgeInsets.only(right: 16),
-                              child: Image.network(
-                                meal.image ?? '',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            title: Text(
-                              meal.title ?? 'No Title',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle:
-                                Text('Ready in ${meal.readyInMinutes} minutes'),
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      RecipeScreen(meal.id),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  );
+                  return MealListView(meals: snapshot.data!, homeBloc: _homeBloc);
                 } else if (_homeBloc.isLoading.value) {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -214,3 +145,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
