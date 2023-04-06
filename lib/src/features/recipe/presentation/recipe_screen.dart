@@ -268,8 +268,8 @@ class _RecipeViewState extends State<RecipeView> {
                           return ListTile(
                             title: GestureDetector(
                               child: Text(
-                                // TODO fix the text from being a link
-                                relatedRecipes![index],
+                                relatedRecipes![index].substring(
+                                    relatedRecipes[index].indexOf('>') + 1),
                                 style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.secondary,
