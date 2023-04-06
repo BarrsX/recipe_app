@@ -90,56 +90,56 @@ class Recipe {
     if (summary != null) {
       summaryInfo = _buildSummaryInfo(summary);
       relatedRecipes = _separateRelatedRecipes(summary);
-      relatedRecipesIds = _separateRelatedRecipesIds(summary);
+      relatedRecipesIds = _separateRelatedRecipesIds(relatedRecipes);
     }
 
     return Recipe(
-      vegetarian: json['vegetarian'] as bool?,
-      vegan: json['vegan'] as bool?,
-      glutenFree: json['glutenFree'] as bool?,
-      dairyFree: json['dairyFree'] as bool?,
-      veryHealthy: json['veryHealthy'] as bool?,
-      cheap: json['cheap'] as bool?,
-      veryPopular: json['veryPopular'] as bool?,
-      sustainable: json['sustainable'] as bool?,
-      lowFodmap: json['lowFodmap'] as bool?,
-      weightWatcherSmartPoints: json['weightWatcherSmartPoints'] as int?,
-      gaps: json['gaps'] as String?,
-      preparationMinutes: json['preparationMinutes'] as int?,
-      cookingMinutes: json['cookingMinutes'] as int?,
-      aggregateLikes: json['aggregateLikes'] as int?,
-      healthScore: json['healthScore'] as int?,
-      creditsText: json['creditsText'] as String?,
-      sourceName: json['sourceName'] as String?,
-      pricePerServing: (json['pricePerServing'] as num?)?.toDouble(),
-      extendedIngredients: (json['extendedIngredients'] as List<dynamic>?)
-          ?.map((e) => ExtendedIngredient.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      id: json['id'] as int,
-      title: json['title'] as String?,
-      readyInMinutes: json['readyInMinutes'] as int?,
-      servings: json['servings'] as int?,
-      sourceUrl: json['sourceUrl'] as String?,
-      image: json['image'] as String? ??
-          'https://media.istockphoto.com/photos/food-for-healthy-brain-picture-id1299079243?b=1&k=20&m=1299079243&s=612x612&w=0&h=0nD8xtP3eNikgVuP955dLLwXw1Ch6l1uH4nqcYB8e9I=',
-      imageType: json['imageType'] as String?,
-      summary: json['summary'] as String?,
-      cuisines: json['cuisines'] as List<dynamic>?,
-      dishTypes: json['dishTypes'] as List<dynamic>?,
-      diets: json['diets'] as List<dynamic>?,
-      occasions: json['occasions'] as List<dynamic>?,
-      winePairing: json['winePairing'] == null
-          ? null
-          : WinePairing.fromJson(json['winePairing'] as Map<String, dynamic>),
-      instructions: json['instructions'] as String?,
-      analyzedInstructions: (json['analyzedInstructions'] as List<dynamic>?)
-          ?.map((e) => AnalyzedInstruction.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      originalId: json['originalId'] as dynamic,
-      summaryInfo: summaryInfo,
-      relatedRecipes: relatedRecipes,
-      relatedRecipesIds: relatedRecipesIds
-    );
+        vegetarian: json['vegetarian'] as bool?,
+        vegan: json['vegan'] as bool?,
+        glutenFree: json['glutenFree'] as bool?,
+        dairyFree: json['dairyFree'] as bool?,
+        veryHealthy: json['veryHealthy'] as bool?,
+        cheap: json['cheap'] as bool?,
+        veryPopular: json['veryPopular'] as bool?,
+        sustainable: json['sustainable'] as bool?,
+        lowFodmap: json['lowFodmap'] as bool?,
+        weightWatcherSmartPoints: json['weightWatcherSmartPoints'] as int?,
+        gaps: json['gaps'] as String?,
+        preparationMinutes: json['preparationMinutes'] as int?,
+        cookingMinutes: json['cookingMinutes'] as int?,
+        aggregateLikes: json['aggregateLikes'] as int?,
+        healthScore: json['healthScore'] as int?,
+        creditsText: json['creditsText'] as String?,
+        sourceName: json['sourceName'] as String?,
+        pricePerServing: (json['pricePerServing'] as num?)?.toDouble(),
+        extendedIngredients: (json['extendedIngredients'] as List<dynamic>?)
+            ?.map((e) => ExtendedIngredient.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        id: json['id'] as int,
+        title: json['title'] as String?,
+        readyInMinutes: json['readyInMinutes'] as int?,
+        servings: json['servings'] as int?,
+        sourceUrl: json['sourceUrl'] as String?,
+        image: json['image'] as String? ??
+            'https://media.istockphoto.com/photos/food-for-healthy-brain-picture-id1299079243?b=1&k=20&m=1299079243&s=612x612&w=0&h=0nD8xtP3eNikgVuP955dLLwXw1Ch6l1uH4nqcYB8e9I=',
+        imageType: json['imageType'] as String?,
+        summary: json['summary'] as String?,
+        cuisines: json['cuisines'] as List<dynamic>?,
+        dishTypes: json['dishTypes'] as List<dynamic>?,
+        diets: json['diets'] as List<dynamic>?,
+        occasions: json['occasions'] as List<dynamic>?,
+        winePairing: json['winePairing'] == null
+            ? null
+            : WinePairing.fromJson(json['winePairing'] as Map<String, dynamic>),
+        instructions: json['instructions'] as String?,
+        analyzedInstructions: (json['analyzedInstructions'] as List<dynamic>?)
+            ?.map(
+                (e) => AnalyzedInstruction.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        originalId: json['originalId'] as dynamic,
+        summaryInfo: summaryInfo,
+        relatedRecipes: relatedRecipes,
+        relatedRecipesIds: relatedRecipesIds);
   }
 
   Map<String, dynamic> toJson() => {
@@ -226,20 +226,17 @@ class Recipe {
     return relatedRecipes;
   }
 
-    static List<int> _separateRelatedRecipesIds(String payload) {
-    List<String> relatedRecipes = [];
+  static List<int> _separateRelatedRecipesIds(List<String> relatedRecipes) {
     List<int> relatedRecipesIds = [];
-    final regex = RegExp(r'<a(.*?)<\/a>');
-    final matches = regex.allMatches(payload);
-    final regexNum = RegExp(r'[^\d]');
 
-    for (Match match in matches) {
-      if (match.group(1) != null) {
-        relatedRecipes.add(match.group(1)!);
-        relatedRecipesIds.add(int.parse(match.group(1)!.replaceAll(regexNum, '')));
+    for (String recipe in relatedRecipes) {
+      final regex = RegExp(r'\d+(?=">)'); // updated Regex using lookahead
+      final match = regex.firstMatch(recipe);
+
+      if (match != null) {
+        relatedRecipesIds.add(int.parse(match.group(0)!));
       }
     }
-    
     return relatedRecipesIds;
   }
 }

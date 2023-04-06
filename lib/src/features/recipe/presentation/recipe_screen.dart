@@ -220,11 +220,7 @@ class _RecipeViewState extends State<RecipeView> {
                             child: SizedBox(
                               height: 500,
                               child: ListView.builder(
-                                itemCount: recipe
-                                        .analyzedInstructions![0].steps!.isEmpty
-                                    ? 0
-                                    : recipe
-                                        .analyzedInstructions?[0].steps?.length,
+                                itemCount: recipe.analyzedInstructions!.isNotEmpty ? recipe.analyzedInstructions![0].steps!.length : 0,
                                 itemBuilder: (BuildContext context, int index) {
                                   InstructionStep? steps = recipe
                                       .analyzedInstructions![0].steps![index];
