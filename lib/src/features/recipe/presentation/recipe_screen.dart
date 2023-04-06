@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter/material.dart';
-import 'package:recipe_app/src/features/recipe/domain/models/ingredient_model.dart';
-import 'package:recipe_app/src/features/recipe/domain/models/recipe_model.dart';
+
+import '../domain/models/extended_ingredient.dart';
+import '../domain/models/recipe.dart';
+import '../domain/models/step.dart';
 
 import 'bloc/recipe_bloc.dart';
 import 'bloc/recipe_event.dart';
@@ -58,7 +61,7 @@ class _RecipeViewState extends State<RecipeView> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is RecipeLoadedState) {
             return _buildRecipeView(state.recipe, state.recipeSummary,
-                state.relatedRecipes, context);
+                state.relatedRecipes, state.relatedRecipesIds, context);
           } else if (state is RecipeErrorState) {
             return Center(
                 child: Column(
@@ -85,14 +88,18 @@ class _RecipeViewState extends State<RecipeView> {
     );
   }
 
-  Widget _buildRecipeView(Recipe recipe, Map<String, String> recipeSummary,
-      List<String> relatedRecipes, BuildContext context) {
+  Widget _buildRecipeView(
+      Recipe recipe,
+      Map<String, String>? recipeSummary,
+      List<String>? relatedRecipes,
+      List<int>? relatedRecipesIds,
+      BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Image.network(
-            recipe.imageUrl ?? 'https://media.istockphoto.com/photos/food-for-healthy-brain-picture-id1299079243?b=1&k=20&m=1299079243&s=612x612&w=0&h=0nD8xtP3eNikgVuP955dLLwXw1Ch6l1uH4nqcYB8e9I=',
+            recipe.image ?? '',
             height: 300,
             fit: BoxFit.cover,
           ),
@@ -103,7 +110,7 @@ class _RecipeViewState extends State<RecipeView> {
               children: [
                 Center(
                   child: Text(
-                    recipe.title,
+                    recipe.title ?? 'No Title',
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),
@@ -121,7 +128,7 @@ class _RecipeViewState extends State<RecipeView> {
                           DataColumn(label: Text('')),
                           DataColumn(label: Text('')),
                         ],
-                        rows: recipeSummary.entries
+                        rows: recipeSummary!.entries
                             .map(
                               (entry) => DataRow(
                                 cells: [
@@ -149,10 +156,10 @@ class _RecipeViewState extends State<RecipeView> {
                     SizedBox(
                       height: 400,
                       child: ListView.builder(
-                        itemCount: recipe.extendedIngredients.length,
+                        itemCount: recipe.extendedIngredients?.length,
                         itemBuilder: (BuildContext context, int index) {
-                          Ingredient ingredient =
-                              recipe.extendedIngredients[index];
+                          ExtendedIngredient ingredient =
+                              recipe.extendedIngredients![index];
                           final hasImage = ingredient.image != null;
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 2.0),
@@ -213,23 +220,25 @@ class _RecipeViewState extends State<RecipeView> {
                             child: SizedBox(
                               height: 500,
                               child: ListView.builder(
-                                itemCount: recipe.analyzedInstructions.isEmpty
+                                itemCount: recipe
+                                        .analyzedInstructions![0].steps!.isEmpty
                                     ? 0
-                                    : recipe.analyzedInstructions.length,
+                                    : recipe
+                                        .analyzedInstructions?[0].steps?.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  Instruction instruction =
-                                      recipe.analyzedInstructions[index];
+                                  InstructionStep? steps = recipe
+                                      .analyzedInstructions![0].steps![index];
                                   return ListTile(
                                     leading: CircleAvatar(
                                       child: Text(
-                                        instruction.number.toString(),
+                                        steps.number.toString(),
                                         style: const TextStyle(
                                           color: Colors.white,
                                         ),
                                       ),
                                     ),
                                     title: Text(
-                                      instruction.step ?? '',
+                                      steps.step ?? '',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium,
@@ -254,15 +263,26 @@ class _RecipeViewState extends State<RecipeView> {
                     Container(
                       height: 250,
                       child: ListView.builder(
-                        itemCount: relatedRecipes.length,
+                        itemCount: relatedRecipes?.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            title: Html(
-                              data: '<a${relatedRecipes[index]}</a>',
-                              style: {
-                                'fontFamily': Style(fontFamily: 'Open Sans'),
-                                'fontSize': Style(fontSize: const FontSize(16)),
-                              },
+                            title: GestureDetector(
+                              child: Text(
+                                // TODO fix the text from being a link
+                                relatedRecipes![index],
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                  return RecipeScreen(
+                                      relatedRecipesIds![index]);
+                                }),
+                              ),
                             ),
                           );
                         },

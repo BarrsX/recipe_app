@@ -1,10 +1,12 @@
+import 'package:recipe_app/src/features/home/presentation/bloc/home_bloc.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/material.dart';
 
-import 'package:recipe_app/src/features/home/presentation/bloc/home_bloc.dart';
-import 'package:recipe_app/src/features/home/presentation/widgets/meal_list_view.dart';
-import 'package:recipe_app/src/features/home/presentation/widgets/search_field.dart';
+import '../../recipe/presentation/recipe_screen.dart';
+import '../../recipe/domain/models/recipe.dart';
 
-import '../domain/models/meal_model.dart';
+import 'widgets/search_field.dart';
+import 'widgets/meal_list_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -51,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Stack(
           children: [
-            StreamBuilder<List<Meal>>(
+            StreamBuilder<List<Recipe>>(
               stream: _homeBloc.meals,
               builder: (context, snapshot) {
                 if (snapshot.hasData &&
@@ -125,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _homeBloc.ascendingOrder.add(!_homeBloc.ascendingOrder.value);
                   _homeBloc.sortMeals(_homeBloc.meals.value,
                       _homeBloc.ascendingOrder.value ? 'asc' : 'dsc');
-                  Navigator.pop(context); // close the sidebar
+                  Navigator.pop(context);
                 },
               ),
               ListTile(
@@ -133,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: const Text('Randomize'),
                 onTap: () {
                   _homeBloc.resetSearch();
-                  Navigator.pop(context); // close the sidebar
+                  Navigator.pop(context);
                 },
               ),
             ],

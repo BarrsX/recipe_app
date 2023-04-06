@@ -1,4 +1,4 @@
-import 'package:recipe_app/src/features/recipe/domain/models/recipe_model.dart';
+import '../../domain/models/recipe.dart';
 
 abstract class RecipeState {}
 
@@ -8,13 +8,15 @@ class RecipeLoadingState extends RecipeState {}
 
 class RecipeLoadedState extends RecipeState {
   final Recipe recipe;
-  final Map<String, String> recipeSummary;
-  final List<String> relatedRecipes;
+  final Map<String, String>? recipeSummary;
+  final List<String>? relatedRecipes;
+  final List<int>? relatedRecipesIds;
 
   RecipeLoadedState({
     required this.recipe,
     required this.recipeSummary,
     required this.relatedRecipes,
+    required this.relatedRecipesIds,
   });
 }
 
@@ -26,4 +28,3 @@ class RecipeErrorState extends RecipeState {
   @override
   List<Object?> get props => [errorMessage];
 }
-
