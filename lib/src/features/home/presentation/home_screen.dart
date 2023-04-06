@@ -131,16 +131,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.black,
                         fontWeight: FontWeight.bold)),
               ),
-              ListTile(
-                leading: const Icon(Icons.arrow_upward_rounded),
-                title: const Text('Sort'),
-                onTap: () {
-                  _homeBloc.ascendingOrder.add(!_homeBloc.ascendingOrder.value);
-                  _homeBloc.sortMeals(_homeBloc.meals.value,
-                      _homeBloc.ascendingOrder.value ? 'asc' : 'dsc');
-                  Navigator.pop(context);
-                },
-              ),
+              StreamBuilder<bool>(
+                  stream: _homeBloc.ascendingOrder.stream,
+                  initialData: _homeBloc.ascendingOrder.value,
+                  builder: (context, snapshot) {
+                    return ListTile(
+                      leading: snapshot.data!
+                          ? const Icon(Icons.arrow_downward_rounded)
+                          : const Icon(Icons.arrow_upward_rounded),
+                      title: const Text('Sort'),
+                      onTap: () {
+                        _homeBloc.ascendingOrder
+                            .add(!_homeBloc.ascendingOrder.value);
+                        _homeBloc.sortMeals(_homeBloc.meals.value,
+                            _homeBloc.ascendingOrder.value ? 'asc' : 'dsc');
+                        Navigator.pop(context);
+                      },
+                    );
+                  }),
               ListTile(
                 leading: const Icon(Icons.shuffle_rounded),
                 title: const Text('Randomize'),
