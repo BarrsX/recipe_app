@@ -6,8 +6,14 @@ import '../bloc/home_bloc.dart';
 class SearchField extends StatelessWidget {
   final TextEditingController searchController;
   final HomeBloc homeBloc;
+  final VoidCallback onHomePressed;
 
-  const SearchField({Key? key, required this.searchController, required this.homeBloc}) : super(key: key);
+  const SearchField(
+      {Key? key,
+      required this.searchController,
+      required this.homeBloc,
+      required this.onHomePressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +33,8 @@ class SearchField extends StatelessWidget {
           ),
           filled: true,
           fillColor: Colors.grey[200],
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         ),
         onSubmitted: homeBloc.loadOrSearchMeals,
       ),

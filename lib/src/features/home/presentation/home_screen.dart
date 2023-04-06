@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
+
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final HomeBloc _homeBloc = HomeBloc();
@@ -30,6 +31,11 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  void onPressHome() {
+    _homeBloc.resetSearch();
+    _searchController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -37,9 +43,13 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.home),
-            onPressed: _homeBloc.resetSearch,
+            onPressed: onPressHome,
           ),
-          title: SearchField(searchController: _searchController, homeBloc: _homeBloc),
+          title: SearchField(
+            searchController: _searchController,
+            homeBloc: _homeBloc,
+            onHomePressed: onPressHome,
+          ),
           actions: [
             Builder(builder: (context) {
               return IconButton(
@@ -59,7 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (snapshot.hasData &&
                     snapshot.data != null &&
                     snapshot.data!.isNotEmpty) {
-                  return MealListView(meals: snapshot.data!, homeBloc: _homeBloc);
+                  return MealListView(
+                      meals: snapshot.data!, homeBloc: _homeBloc);
                 } else if (_homeBloc.isLoading.value) {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -145,4 +156,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
