@@ -157,6 +157,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.settings_rounded),
+                title: const Text('Settings'),
+                onTap: () {
+                  // TODO: Implement settings; maybe for user info or accessibility
+                },
+              ),
             ],
           ),
         ),

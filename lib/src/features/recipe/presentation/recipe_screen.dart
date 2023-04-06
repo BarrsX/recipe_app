@@ -114,7 +114,7 @@ class _RecipeViewState extends State<RecipeView> {
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 32),
                 Column(
                   children: [
                     Text(
@@ -257,7 +257,7 @@ class _RecipeViewState extends State<RecipeView> {
                 Column(
                   children: [
                     Text(
-                      'Related Recipes:',
+                      'Related Recipes',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     Container(
