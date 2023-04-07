@@ -1,13 +1,16 @@
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
 
 import '../../../recipe/domain/models/recipe.dart';
 
 class HomeRepository {
+  final String spoonacularApiKey = dotenv.env['SPOONACULAR_API_KEY']!;
+
   /// Get more meals from the API
-  Future<List<Recipe>> getMoreMeals(String spoonacularApiKey) async {
+  Future<List<Recipe>> getMoreMeals() async {
     final url = Uri.parse(
         'https://api.spoonacular.com/recipes/random?number=10&addRecipeInformation=true&apiKey=$spoonacularApiKey');
 
@@ -38,8 +41,7 @@ class HomeRepository {
   }
 
   /// Get the list of suggestions for the search query
-  Future<Iterable<String>> getSuggestionList(
-      String query, String spoonacularApiKey) async {
+  Future<Iterable<String>> getSuggestionList(String query) async {
     final url = Uri.parse(
         'https://api.spoonacular.com/recipes/autocomplete?number=5&query=$query&apiKey=$spoonacularApiKey');
 
@@ -64,7 +66,6 @@ class HomeRepository {
   /// Load meals from the API or search for meals based on the query
   Future<void> loadOrSearchMeals(
       String query,
-      String spoonacularApiKey,
       BehaviorSubject<List<Recipe>> meals,
       BehaviorSubject<bool> isLoading,
       BehaviorSubject<bool> isError,
