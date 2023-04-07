@@ -25,6 +25,26 @@ class HomeBloc {
         query, spoonacularApiKey, meals, isLoading, isError, ascendingOrder);
   }
 
+  void loadMoreMeals() async {
+    try {
+      // Load more meals from the API
+      final List<Recipe> newMeals =
+          await _homeRepository.getMoreMeals(spoonacularApiKey);
+
+      // Append the new meals to the existing list
+      final List<Recipe> currentMeals = meals.value ?? [];
+      final List<Recipe> updatedMeals = [...currentMeals, ...newMeals];
+      meals.add(updatedMeals);
+
+      // Set isLoading to false
+      isLoading.add(false);
+    } catch (error) {
+      print('Error while loading more meals: $error');
+      // Set isError to true
+      isError.add(true);
+    }
+  }
+
   void resetSearch() {
     meals.add([]);
     isLoading.add(true);

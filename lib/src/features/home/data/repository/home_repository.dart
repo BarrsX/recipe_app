@@ -4,6 +4,36 @@ import 'package:rxdart/rxdart.dart';
 import '../../../recipe/domain/models/recipe.dart';
 
 class HomeRepository {
+  Future<List<Recipe>> getMoreMeals(String spoonacularApiKey) async {
+    final url = Uri.parse(
+        'https://api.spoonacular.com/recipes/random?number=10&addRecipeInformation=true&apiKey=$spoonacularApiKey');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        List<Recipe> mealsList = [];
+
+        if (data['recipes'] is List) {
+          mealsList = (data['recipes'] as List)
+              .map((mealJson) => Recipe.fromJson(mealJson))
+              .toList();
+        } else if (data['recipes'] is Map) {
+          mealsList = [Recipe.fromJson(data['recipes'])];
+        }
+
+        return mealsList;
+      } else {
+        print('Error: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+
+    return [];
+  }
+
   Future<Iterable<String>> getSuggestionList(
       String query, String spoonacularApiKey) async {
     final url = Uri.parse(
