@@ -7,7 +7,6 @@ import 'recipe_state.dart';
 
 class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   final RecipeRepository _recipeRepository = RecipeRepository();
-  final Map<String, dynamic> _recipe = {};
 
   RecipeBloc() : super(RecipeInitState()) {
     on((LoadRecipeEvent event, emit) => mapLoadRecipeEventToState(event, emit));
