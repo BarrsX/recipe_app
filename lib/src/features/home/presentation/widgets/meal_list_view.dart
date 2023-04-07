@@ -3,7 +3,7 @@ import '../../../recipe/domain/models/recipe.dart';
 import '../bloc/home_bloc.dart';
 import '../../../recipe/presentation/recipe_screen.dart';
 
-class MealListView extends StatelessWidget {
+class MealListView extends StatefulWidget {
   final List<Recipe> meals;
   final HomeBloc homeBloc;
 
@@ -11,17 +11,36 @@ class MealListView extends StatelessWidget {
       : super(key: key);
 
   @override
+  _MealListViewState createState() => _MealListViewState();
+}
+
+class _MealListViewState extends State<MealListView> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.maxScrollExtent ==
+          _scrollController.offset) {
+        widget.homeBloc.loadMoreMeals();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    for (var meal in meals) {
+    for (var meal in widget.meals) {
       precacheImage(NetworkImage(meal.image ?? ''), context);
     }
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: ListView.separated(
+        controller: _scrollController,
         separatorBuilder: (context, index) => const Divider(height: 1),
-        itemCount: meals.length,
+        itemCount: widget.meals.length,
         itemBuilder: (context, index) {
-          final meal = meals[index];
+          final meal = widget.meals[index];
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
             child: ListTile(

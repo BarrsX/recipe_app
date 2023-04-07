@@ -1,4 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/repository/recipe_repository.dart';
@@ -8,18 +7,16 @@ import 'recipe_state.dart';
 
 class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   final RecipeRepository _recipeRepository = RecipeRepository();
-  late final String spoonacularApiKey = dotenv.env['SPOONACULAR_API_KEY']!;
-  final Map<String, dynamic> _recipe = {};
 
   RecipeBloc() : super(RecipeInitState()) {
     on((LoadRecipeEvent event, emit) => mapLoadRecipeEventToState(event, emit));
   }
 
+  /// Map the [LoadRecipeEvent] to the [RecipeState]
   void mapLoadRecipeEventToState(LoadRecipeEvent event, Emitter emit) async {
     emit(RecipeLoadingState());
     try {
-      Recipe recipe =
-          await _recipeRepository.getRecipe(event.mealId, spoonacularApiKey);
+      Recipe recipe = await _recipeRepository.getRecipeById(event.mealId);
 
       emit(RecipeLoadedState(
           recipe: recipe,
