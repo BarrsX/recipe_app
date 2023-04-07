@@ -197,6 +197,16 @@ class _RecipeViewState extends State<RecipeView> {
                                             textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(height: 16.0),
+                                          if (ingredient.aisle != null) ...[
+                                            Text(
+                                              'Aisle: ${ingredient.aisle}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(height: 16.0),
+                                          ],
                                           if (ingredient.amount != null) ...[
                                             Text(
                                               'Amount: ${ingredient.amount} ${ingredient.unit}',
