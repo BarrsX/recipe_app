@@ -43,3 +43,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .env
+lib/src/features/recipe/presentation/widgets/recipe_view.dart
