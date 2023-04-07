@@ -15,6 +15,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     on((LoadRecipeEvent event, emit) => mapLoadRecipeEventToState(event, emit));
   }
 
+  /// Map the [LoadRecipeEvent] to the [RecipeState]
   void mapLoadRecipeEventToState(LoadRecipeEvent event, Emitter emit) async {
     emit(RecipeLoadingState());
     try {

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../domain/models/recipe.dart';
 
 class RecipeRepository {
+  /// Get the recipe from the API
   Future getRecipe(int mealId, String spoonacularApiKey) async {
     final url = Uri.parse(
         'https://api.spoonacular.com/recipes/$mealId/information?apiKey=$spoonacularApiKey');

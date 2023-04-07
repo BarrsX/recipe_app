@@ -16,35 +16,35 @@ class HomeBloc {
   final BehaviorSubject<bool> ascendingOrder =
       BehaviorSubject<bool>.seeded(true);
 
+  /// Get the list of suggestions for the search query
   Future<Iterable<String>> getSuggestionList(String query) async {
     return await _homeRepository.getSuggestionList(query, spoonacularApiKey);
   }
 
+  /// Load or search meals from the API
   Future<void> loadOrSearchMeals([String query = '']) async {
     await _homeRepository.loadOrSearchMeals(
         query, spoonacularApiKey, meals, isLoading, isError, ascendingOrder);
   }
 
+  /// Load more meals from the API
   void loadMoreMeals() async {
     try {
-      // Load more meals from the API
       final List<Recipe> newMeals =
           await _homeRepository.getMoreMeals(spoonacularApiKey);
 
-      // Append the new meals to the existing list
       final List<Recipe> currentMeals = meals.value ?? [];
       final List<Recipe> updatedMeals = [...currentMeals, ...newMeals];
       meals.add(updatedMeals);
 
-      // Set isLoading to false
       isLoading.add(false);
     } catch (error) {
       print('Error while loading more meals: $error');
-      // Set isError to true
       isError.add(true);
     }
   }
 
+  /// Reset the search
   void resetSearch() {
     meals.add([]);
     isLoading.add(true);
@@ -53,6 +53,7 @@ class HomeBloc {
     loadOrSearchMeals();
   }
 
+  /// Sort the meals based on the order
   void sortMeals(List<Recipe> mealsList, String order) {
     if (order == 'asc') {
       mealsList.sort((a, b) {
@@ -67,6 +68,7 @@ class HomeBloc {
     meals.add(mealsList);
   }
 
+  /// Dispose the streams
   void dispose() {
     suggestionList.close();
     meals.close();

@@ -1,9 +1,12 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
+
 import '../../../recipe/domain/models/recipe.dart';
 
 class HomeRepository {
+  /// Get more meals from the API
   Future<List<Recipe>> getMoreMeals(String spoonacularApiKey) async {
     final url = Uri.parse(
         'https://api.spoonacular.com/recipes/random?number=10&addRecipeInformation=true&apiKey=$spoonacularApiKey');
@@ -34,6 +37,7 @@ class HomeRepository {
     return [];
   }
 
+  /// Get the list of suggestions for the search query
   Future<Iterable<String>> getSuggestionList(
       String query, String spoonacularApiKey) async {
     final url = Uri.parse(
@@ -57,6 +61,7 @@ class HomeRepository {
     return [];
   }
 
+  /// Load meals from the API or search for meals based on the query
   Future<void> loadOrSearchMeals(
       String query,
       String spoonacularApiKey,
@@ -103,6 +108,7 @@ class HomeRepository {
     }
   }
 
+  /// Sort the meals list based on the order
   void _sortMeals(List<Recipe> mealsList, String order) {
     if (order == 'asc') {
       mealsList.sort((a, b) {
