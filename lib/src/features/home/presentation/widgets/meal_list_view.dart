@@ -53,12 +53,24 @@ class _MealListViewState extends State<MealListView> {
                   fit: BoxFit.cover,
                 ),
               ),
-              title: Text(
-                meal.title ?? 'No Title',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              title: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      meal.title ?? 'No Title',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  if (meal.veryPopular != null && meal.veryPopular!)
+                    Container(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: const Icon(Icons.star,
+                          size: 20, color: Colors.yellow),
+                    ),
+                ],
               ),
               subtitle: Text('Ready in ${meal.readyInMinutes} minutes'),
               onTap: () {
