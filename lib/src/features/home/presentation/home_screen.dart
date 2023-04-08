@@ -1,8 +1,6 @@
 import 'package:recipe_app/src/features/home/presentation/bloc/home_bloc.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/material.dart';
 
-import '../../recipe/presentation/recipe_screen.dart';
 import '../../recipe/domain/models/recipe.dart';
 
 import 'widgets/search_field.dart';
@@ -50,16 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
             homeBloc: _homeBloc,
             onHomePressed: onPressHome,
           ),
-          actions: [
-            Builder(builder: (context) {
-              return IconButton(
-                icon: const Icon(Icons.sort),
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-              );
-            }),
-          ],
         ),
         body: Stack(
           children: [
@@ -120,37 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ],
-        ),
-        endDrawer: Drawer(
-          child: ListView(
-            children: [
-              const ListTile(
-                title: Text('Menu',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold)),
-              ),
-              ListTile(
-                leading: const Icon(Icons.arrow_upward_rounded),
-                title: const Text('Sort'),
-                onTap: () {
-                  _homeBloc.ascendingOrder.add(!_homeBloc.ascendingOrder.value);
-                  _homeBloc.sortMeals(_homeBloc.meals.value,
-                      _homeBloc.ascendingOrder.value ? 'asc' : 'dsc');
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.shuffle_rounded),
-                title: const Text('Randomize'),
-                onTap: () {
-                  _homeBloc.resetSearch();
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
         ),
       ),
     );

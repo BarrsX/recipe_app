@@ -31,6 +31,7 @@ class _RecipeViewState extends State<RecipeView> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: add home button to recipe view
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
