@@ -82,6 +82,10 @@ class _MealListViewState extends State<MealListView> {
               const Text('Sort by: '),
               // TODO: Prevent filter popup from closing after clicking a filter
               PopupMenuButton<MealSortAttribute>(
+                color: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
                 initialValue: _sortAttribute,
                 onSelected: (attribute) {
                   if (_sortAttribute == attribute) {
@@ -114,6 +118,10 @@ class _MealListViewState extends State<MealListView> {
               const SizedBox(width: 10),
               const Text('Filter by: '),
               PopupMenuButton(
+                color: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
                 itemBuilder: (_) => [
                   CheckedPopupMenuItem(
                     checked: _isVegetarianFilterEnabled,
