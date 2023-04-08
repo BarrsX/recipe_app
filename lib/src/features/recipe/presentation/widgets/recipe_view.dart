@@ -209,7 +209,7 @@ class _RecipeViewState extends State<RecipeView> {
                                           ],
                                           if (ingredient.measures != null) ...[
                                             Text(
-                                              'Metric: ${ingredient.measures!.metric?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.metric?.unitLong ?? '-'}',
+                                              'US: ${ingredient.measures!.us?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.us?.unitLong ?? '-'}',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleSmall,
@@ -217,7 +217,7 @@ class _RecipeViewState extends State<RecipeView> {
                                             ),
                                             const SizedBox(height: 8.0),
                                             Text(
-                                              'US: ${ingredient.measures!.us?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.us?.unitLong ?? '-'}',
+                                              'Metric: ${ingredient.measures!.metric?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.metric?.unitLong ?? '-'}',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleSmall,
