@@ -207,26 +207,6 @@ class _RecipeViewState extends State<RecipeView> {
                                             ),
                                             const SizedBox(height: 16.0),
                                           ],
-                                          if (ingredient.amount != null) ...[
-                                            Text(
-                                              'Amount: ${ingredient.amount} ${ingredient.unit}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            const SizedBox(height: 16.0),
-                                          ],
-                                          if (ingredient.original != null) ...[
-                                            Text(
-                                              '${ingredient.original}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            const SizedBox(height: 16.0),
-                                          ],
                                           if (ingredient.measures != null) ...[
                                             Text(
                                               'Metric: ${ingredient.measures!.metric?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.metric?.unitLong ?? '-'}',
@@ -240,7 +220,7 @@ class _RecipeViewState extends State<RecipeView> {
                                               'US: ${ingredient.measures!.us?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.us?.unitLong ?? '-'}',
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .subtitle2,
+                                                  .titleSmall,
                                               textAlign: TextAlign.center,
                                             ),
                                           ],
