@@ -82,7 +82,7 @@ class _MealListViewState extends State<MealListView> {
               const Text('Sort by: '),
               // TODO: Prevent filter popup from closing after clicking a filter
               PopupMenuButton<MealSortAttribute>(
-                color: Colors.redAccent,
+                color: Colors.yellow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -118,7 +118,7 @@ class _MealListViewState extends State<MealListView> {
               const SizedBox(width: 10),
               const Text('Filter by: '),
               PopupMenuButton(
-                color: Colors.redAccent,
+                color: Colors.yellow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
