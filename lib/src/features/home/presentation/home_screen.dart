@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             Builder(builder: (context) {
               return IconButton(
-                icon: const Icon(Icons.sort),
+                icon: const Icon(Icons.menu),
                 onPressed: () {
                   Scaffold.of(context).openEndDrawer();
                 },
@@ -130,16 +130,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontSize: 18,
                         color: Colors.black,
                         fontWeight: FontWeight.bold)),
-              ),
-              ListTile(
-                leading: const Icon(Icons.arrow_upward_rounded),
-                title: const Text('Sort'),
-                onTap: () {
-                  _homeBloc.ascendingOrder.add(!_homeBloc.ascendingOrder.value);
-                  _homeBloc.sortMeals(_homeBloc.meals.value,
-                      _homeBloc.ascendingOrder.value ? 'asc' : 'dsc');
-                  Navigator.pop(context);
-                },
               ),
               ListTile(
                 leading: const Icon(Icons.shuffle_rounded),
