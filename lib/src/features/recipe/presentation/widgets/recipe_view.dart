@@ -1,5 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/models/extended_ingredient.dart';
 import '../../domain/models/recipe.dart';
@@ -191,7 +191,7 @@ class _RecipeViewState extends State<RecipeView> {
                                           ],
                                           Text(
                                             // TODO: titlecase names
-                                            ingredient.nameClean!,
+                                            ingredient.nameClean ?? 'Ingredient',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .headlineMedium,
@@ -241,33 +241,37 @@ class _RecipeViewState extends State<RecipeView> {
                                             ),
                                           )
                                         : null,
-                                    subtitle: Flexible(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(height: 8.0),
-                                          Text(
-                                            ingredient.nameClean!,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium,
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
+                                    subtitle: Column(
+                                      children: [
+                                        Flexible(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(height: 8.0),
+                                              Text(
+                                                ingredient.nameClean ?? 'Ingredient',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                              ),
+                                              SizedBox(
+                                                height: 56.0,
+                                                child: Text(
+                                                  ingredient.original!,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 3,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(
-                                            height: 56.0,
-                                            child: Text(
-                                              ingredient.original!,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 3,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),

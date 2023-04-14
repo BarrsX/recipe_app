@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../recipe/domain/models/recipe.dart';
-import '../bloc/home_bloc.dart';
-import '../../../recipe/presentation/recipe_screen.dart';
 
-enum MealSortAttribute { readyInMinutes, aggregateLikes, healthScore }
+import '../../../recipe/domain/models/recipe.dart';
+import '../../../recipe/presentation/recipe_screen.dart';
+import '../bloc/home_bloc.dart';
+
+enum MealSortAttribute { readyInMinutes, aggregateLikes, healthScore, none}
 
 class MealListView extends StatefulWidget {
   final List<Recipe> meals;
@@ -18,7 +19,7 @@ class MealListView extends StatefulWidget {
 
 class _MealListViewState extends State<MealListView> {
   final ScrollController _scrollController = ScrollController();
-  MealSortAttribute _sortAttribute = MealSortAttribute.readyInMinutes;
+  MealSortAttribute _sortAttribute = MealSortAttribute.none;
   bool _isAscending = true;
 
   bool _isVegetarianFilterEnabled = false;
@@ -55,6 +56,9 @@ class _MealListViewState extends State<MealListView> {
     }).toList();
 
     filteredMeals.sort((a, b) {
+      if (_sortAttribute == MealSortAttribute.none) {
+        return 0;
+      }
       int comparison;
       switch (_sortAttribute) {
         case MealSortAttribute.aggregateLikes:
@@ -66,6 +70,8 @@ class _MealListViewState extends State<MealListView> {
         case MealSortAttribute.readyInMinutes:
           comparison = a.readyInMinutes!.compareTo(b.readyInMinutes!);
           break;
+        default:
+          comparison = 0;
       }
       return _isAscending ? comparison : -comparison;
     });

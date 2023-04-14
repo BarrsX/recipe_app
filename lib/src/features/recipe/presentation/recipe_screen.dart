@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/recipe_bloc.dart';
-
 import 'widgets/recipe_view.dart';
 
 class RecipeScreen extends StatelessWidget {

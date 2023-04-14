@@ -5,7 +5,7 @@ class ProductMatch {
   String? price;
   String? imageUrl;
   double? averageRating;
-  double? ratingCount;
+  int? ratingCount;
   double? score;
   String? link;
 
@@ -28,7 +28,7 @@ class ProductMatch {
         price: json['price'] as String?,
         imageUrl: json['imageUrl'] as String?,
         averageRating: (json['averageRating'] as num?)?.toDouble(),
-        ratingCount: json['ratingCount'] as double?,
+        ratingCount: json['ratingCount'] as int?,
         score: (json['score'] as num?)?.toDouble(),
         link: json['link'] as String?,
       );
