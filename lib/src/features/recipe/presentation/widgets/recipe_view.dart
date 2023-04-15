@@ -32,45 +32,52 @@ class _RecipeViewState extends State<RecipeView> {
   @override
   Widget build(BuildContext context) {
     // TODO: add home button to recipe view
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: BlocBuilder<RecipeBloc, RecipeState>(
-        builder: (context, state) {
-          if (state is RecipeInitState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is RecipeLoadingState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is RecipeLoadedState) {
-            return _buildRecipeView(state.recipe, state.recipeSummary,
-                state.relatedRecipes, state.relatedRecipesIds, context);
-          } else if (state is RecipeErrorState) {
-            return Center(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  state.errorMessage,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    _recipeBloc.add(LoadRecipeEvent(widget.mealId));
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
-            ));
-          } else {
-            return Container();
-          }
-        },
-      ),
+    return BlocBuilder<RecipeBloc, RecipeState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: Text(state is RecipeLoadedState
+                  ? state.recipe.title ?? 'Recipe'
+                  : 'Recipe')),
+          // TODO: might be able to remove this bloc builder
+          body: BlocBuilder<RecipeBloc, RecipeState>(
+            builder: (context, state) {
+              if (state is RecipeInitState) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is RecipeLoadingState) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is RecipeLoadedState) {
+                return _buildRecipeView(state.recipe, state.recipeSummary,
+                    state.relatedRecipes, state.relatedRecipesIds, context);
+              } else if (state is RecipeErrorState) {
+                return Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      state.errorMessage,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        _recipeBloc.add(LoadRecipeEvent(widget.mealId));
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ));
+              } else {
+                return Container();
+              }
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -145,13 +152,9 @@ class _RecipeViewState extends State<RecipeView> {
                       Container(
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(16),
-                        child: const Text(
+                        child: Text(
                           'Ingredients:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ),
                       Padding(
@@ -175,7 +178,7 @@ class _RecipeViewState extends State<RecipeView> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        backgroundColor: Colors.white,
+                                        backgroundColor: Theme.of(context).dialogBackgroundColor,
                                         contentPadding:
                                             const EdgeInsets.all(16.0),
                                         content: Column(
@@ -320,13 +323,9 @@ class _RecipeViewState extends State<RecipeView> {
                               Container(
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.all(16),
-                                child: const Text(
+                                child: Text(
                                   'Instructions:',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
                               ),
                               const SizedBox(height: 16),
@@ -360,10 +359,9 @@ class _RecipeViewState extends State<RecipeView> {
                                       ),
                                       title: Text(
                                         steps.step ?? '',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black87,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
                                       ),
                                     ),
                                   );
@@ -381,10 +379,10 @@ class _RecipeViewState extends State<RecipeView> {
                   children: [
                     Text(
                       'Related Recipes:',
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    SizedBox(height: 10),
-                    Container(
+                    const SizedBox(height: 10),
+                    SizedBox(
                       height: 250,
                       child: ListView.builder(
                         itemCount: relatedRecipes?.length,

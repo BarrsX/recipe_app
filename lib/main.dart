@@ -55,8 +55,22 @@ class MyApp extends StatelessWidget {
             '/home': (context) => const HomeScreen(),
           },
           theme: ThemeData(
-            primarySwatch: Colors.red,
+            brightness: Brightness.dark,
+            primaryColor: Colors.red[800],
+            textTheme: const TextTheme(
+              displayLarge: TextStyle(
+                color: Colors.white,
+              ),
+              titleLarge: TextStyle(
+                color: Colors.white,
+              ),
+              titleMedium: TextStyle(
+                color: Colors.white,
+              ),
+            ),
             visualDensity: VisualDensity.adaptivePlatformDensity,
+            colorScheme: const ColorScheme.dark().copyWith(
+                primary: Colors.red[800], secondary: Colors.redAccent),
           ),
         ),
       ),

@@ -51,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.home),
             onPressed: onPressHome,
           ),
+            backgroundColor: Theme.of(context).primaryColor,
           title: SearchField(
             searchController: _searchController,
             homeBloc: _homeBloc,
@@ -130,12 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
         endDrawer: Drawer(
           child: ListView(
             children: [
-              const ListTile(
+              ListTile(
                 title: Text('Menu',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold)),
+                    style: Theme.of(context).textTheme.titleLarge),
               ),
               ListTile(
                 leading: const Icon(Icons.shuffle_rounded),
