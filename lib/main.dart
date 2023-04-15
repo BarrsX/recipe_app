@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
                   create: (_) => authenticationBloc,
                   child: LoginScreen(),
                 ),
-            '/home': (context) => HomeScreen(),
+            '/home': (context) => const HomeScreen(),
           },
           theme: ThemeData(
             primarySwatch: Colors.red,
