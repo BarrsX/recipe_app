@@ -135,177 +135,204 @@ class _RecipeViewState extends State<RecipeView> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Column(
-                  children: [
-                    Text(
-                      'Ingredients',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Center(
-                        child: SizedBox(
-                          height: 300,
-                          child: GridView.builder(
-                            itemCount: recipe.extendedIngredients?.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 1.5,
-                            ),
-                            itemBuilder: (BuildContext context, int index) {
-                              ExtendedIngredient ingredient =
-                                  recipe.extendedIngredients![index];
-                              final hasImage = ingredient.image != null;
-                              return InkWell(
-                                onTap: () => showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      backgroundColor: Colors.white,
-                                      contentPadding:
-                                          const EdgeInsets.all(16.0),
-                                      content: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          if (hasImage) ...[
-                                            Image.network(
-                                              'https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}',
-                                              height: 100,
-                                              width: 100,
-                                              errorBuilder:
-                                                  (BuildContext context,
-                                                      Object exception,
-                                                      StackTrace? stackTrace) {
-                                                // show placeholder image when an error occurs
-                                                return const SizedBox(
-                                                  height: 100,
-                                                  width: 100,
-                                                  child: Placeholder(),
-                                                );
-                                              },
-                                            ),
-                                            const SizedBox(height: 16.0),
-                                          ],
-                                          Text(
-                                            // TODO: titlecase names
-                                            ingredient.nameClean ?? 'Ingredient',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headlineMedium,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(height: 16.0),
-                                          if (ingredient.aisle != null) ...[
-                                            Text(
-                                              'Aisle: ${ingredient.aisle}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            const SizedBox(height: 16.0),
-                                          ],
-                                          if (ingredient.measures != null) ...[
-                                            Text(
-                                              'US: ${ingredient.measures!.us?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.us?.unitLong ?? '-'}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            const SizedBox(height: 8.0),
-                                            Text(
-                                              'Metric: ${ingredient.measures!.metric?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.metric?.unitLong ?? '-'}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 2.0),
-                                  child: ListTile(
-                                    leading: hasImage
-                                        ? CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                              'https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}',
-                                            ),
-                                          )
-                                        : null,
-                                    subtitle: Column(
-                                      children: [
-                                        Flexible(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const SizedBox(height: 8.0),
-                                              Text(
-                                                ingredient.nameClean ?? 'Ingredient',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                              ),
-                                              SizedBox(
-                                                height: 56.0,
-                                                child: Text(
-                                                  ingredient.original!,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  maxLines: 3,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(16),
+                        child: const Text(
+                          'Ingredients:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Center(
+                          child: SizedBox(
+                            height: 300,
+                            child: GridView.builder(
+                              itemCount: recipe.extendedIngredients?.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 1.5,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                ExtendedIngredient ingredient =
+                                    recipe.extendedIngredients![index];
+                                final hasImage = ingredient.image != null;
+                                return InkWell(
+                                  onTap: () => showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor: Colors.white,
+                                        contentPadding:
+                                            const EdgeInsets.all(16.0),
+                                        content: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            if (hasImage) ...[
+                                              Image.network(
+                                                'https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}',
+                                                height: 100,
+                                                width: 100,
+                                                errorBuilder: (BuildContext
+                                                        context,
+                                                    Object exception,
+                                                    StackTrace? stackTrace) {
+                                                  // show placeholder image when an error occurs
+                                                  return const SizedBox(
+                                                    height: 100,
+                                                    width: 100,
+                                                    child: Placeholder(),
+                                                  );
+                                                },
+                                              ),
+                                              const SizedBox(height: 16.0),
+                                            ],
+                                            Text(
+                                              // TODO: titlecase names
+                                              ingredient.nameClean ??
+                                                  'Ingredient',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineMedium,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            const SizedBox(height: 16.0),
+                                            if (ingredient.aisle != null) ...[
+                                              Text(
+                                                'Aisle: ${ingredient.aisle}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(height: 16.0),
+                                            ],
+                                            if (ingredient.measures !=
+                                                null) ...[
+                                              Text(
+                                                'US: ${ingredient.measures!.us?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.us?.unitLong ?? '-'}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(height: 8.0),
+                                              Text(
+                                                'Metric: ${ingredient.measures!.metric?.amount?.toStringAsFixed(2) ?? '-'} ${ingredient.measures!.metric?.unitLong ?? '-'}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 2.0),
+                                    child: ListTile(
+                                      leading: hasImage
+                                          ? CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                'https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}',
+                                              ),
+                                            )
+                                          : null,
+                                      subtitle: Column(
+                                        children: [
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const SizedBox(height: 8.0),
+                                                Text(
+                                                  ingredient.nameClean ??
+                                                      'Ingredient',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                ),
+                                                SizedBox(
+                                                  height: 56.0,
+                                                  child: Text(
+                                                    ingredient.original!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 3,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
-                Column(
-                  children: [
-                    Text(
-                      'Instructions:',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Container(
-                      height: 500,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 8),
-                          Expanded(
-                            child: SizedBox(
-                              height: 500,
-                              child: ListView.builder(
+                Container(
+                  height: 500,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(16),
+                                child: const Text(
+                                  'Instructions:',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
                                 itemCount:
                                     recipe.analyzedInstructions!.isNotEmpty
                                         ? recipe.analyzedInstructions![0].steps!
@@ -314,67 +341,84 @@ class _RecipeViewState extends State<RecipeView> {
                                 itemBuilder: (BuildContext context, int index) {
                                   InstructionStep? steps = recipe
                                       .analyzedInstructions![0].steps![index];
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      child: Text(
-                                        steps.number.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white,
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    child: ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: Colors.red,
+                                        child: Text(
+                                          steps.number.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    title: Text(
-                                      steps.step ?? '',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium,
+                                      title: Text(
+                                        steps.step ?? '',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
                                     ),
                                   );
                                 },
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Column(
                   children: [
                     Text(
                       'Related Recipes:',
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: Theme.of(context).textTheme.headline6,
                     ),
+                    SizedBox(height: 10),
                     Container(
                       height: 250,
                       child: ListView.builder(
                         itemCount: relatedRecipes?.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            title: GestureDetector(
-                              child: Text(
-                                relatedRecipes![index].substring(
-                                    relatedRecipes[index].indexOf('>') + 1),
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
+                          return Card(
+                            child: ListTile(
+                              title: GestureDetector(
+                                child: Text(
+                                  relatedRecipes![index].substring(
+                                      relatedRecipes[index].indexOf('>') + 1),
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return RecipeScreen(
+                                          relatedRecipesIds![index]);
+                                    },
+                                  ),
                                 ),
                               ),
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                    return RecipeScreen(
-                                        relatedRecipesIds![index]);
-                                  },
-                                ),
+                              leading: Icon(
+                                Icons.restaurant,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           );
                         },
                       ),
-                    )
+                    ),
                   ],
                 )
               ],
