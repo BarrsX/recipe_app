@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../../../recipe/domain/models/recipe.dart';
-import '../bloc/home_bloc.dart';
 import '../../../recipe/presentation/recipe_screen.dart';
+import '../bloc/home_bloc.dart';
 
-enum MealSortAttribute { readyInMinutes, aggregateLikes, healthScore }
+enum MealSortAttribute { readyInMinutes, aggregateLikes, healthScore, none }
 
 class MealListView extends StatefulWidget {
   final List<Recipe> meals;
@@ -18,7 +19,7 @@ class MealListView extends StatefulWidget {
 
 class _MealListViewState extends State<MealListView> {
   final ScrollController _scrollController = ScrollController();
-  MealSortAttribute _sortAttribute = MealSortAttribute.readyInMinutes;
+  MealSortAttribute _sortAttribute = MealSortAttribute.none;
   bool _isAscending = true;
 
   bool _isVegetarianFilterEnabled = false;
@@ -33,17 +34,20 @@ class _MealListViewState extends State<MealListView> {
   @override
   void initState() {
     super.initState();
+    filteredMeals = widget.meals;
     _scrollController.addListener(() {
       if (_scrollController.position.maxScrollExtent ==
           _scrollController.offset) {
         widget.homeBloc.loadMoreMeals();
+        _updateFilteredMeals();
       }
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var filteredMeals = widget.meals.where((meal) {
+  List<Recipe> filteredMeals = [];
+
+  void _updateFilteredMeals() {
+    filteredMeals = widget.meals.where((meal) {
       return (!_isVegetarianFilterEnabled || meal.vegetarian == true) &&
           (!_isVeganFilterEnabled || meal.vegan == true) &&
           (!_isGlutenFreeFilterEnabled || meal.glutenFree == true) &&
@@ -55,6 +59,10 @@ class _MealListViewState extends State<MealListView> {
     }).toList();
 
     filteredMeals.sort((a, b) {
+      if (_sortAttribute == MealSortAttribute.none) {
+        return 0;
+      }
+
       int comparison;
       switch (_sortAttribute) {
         case MealSortAttribute.aggregateLikes:
@@ -66,190 +74,267 @@ class _MealListViewState extends State<MealListView> {
         case MealSortAttribute.readyInMinutes:
           comparison = a.readyInMinutes!.compareTo(b.readyInMinutes!);
           break;
+        default:
+          comparison = 0;
       }
+
       return _isAscending ? comparison : -comparison;
     });
-    for (var meal in filteredMeals) {
-      precacheImage(NetworkImage(meal.image ?? ''), context);
-    }
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+
+    setState(() {
+      filteredMeals = filteredMeals;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await widget.homeBloc.loadOrSearchMeals();
+        _updateFilteredMeals();
+      },
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const Text('Sort by: '),
-              // TODO: Prevent filter popup from closing after clicking a filter
-              PopupMenuButton<MealSortAttribute>(
-                color: Colors.yellow,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                initialValue: _sortAttribute,
-                onSelected: (attribute) {
-                  if (_sortAttribute == attribute) {
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
                     setState(() {
+                      _sortAttribute = MealSortAttribute.readyInMinutes;
                       _isAscending = !_isAscending;
                     });
-                  } else {
-                    setState(() {
-                      _sortAttribute = attribute;
-                      _isAscending = true;
-                    });
-                  }
-                },
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<MealSortAttribute>>[
-                  const PopupMenuItem(
-                    value: MealSortAttribute.readyInMinutes,
-                    child: Text('Ready In Minutes'),
+                    _updateFilteredMeals();
+                  },
+                  child: Row(
+                    children: [
+                      const Text('Ready in'),
+                      Icon(
+                        _sortAttribute == MealSortAttribute.readyInMinutes
+                            ? (_isAscending
+                                ? Icons.arrow_upward
+                                : Icons.arrow_downward)
+                            : null,
+                      ),
+                    ],
                   ),
-                  const PopupMenuItem(
-                    value: MealSortAttribute.aggregateLikes,
-                    child: Text('Aggregate Likes'),
-                  ),
-                  const PopupMenuItem(
-                    value: MealSortAttribute.healthScore,
-                    child: Text('Health Score'),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 10),
-              const Text('Filter by: '),
-              PopupMenuButton(
-                color: Colors.yellow,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                itemBuilder: (_) => [
-                  CheckedPopupMenuItem(
-                    checked: _isVegetarianFilterEnabled,
-                    value: 'Vegetarian',
-                    child: const Text('Vegetarian'),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _sortAttribute = MealSortAttribute.aggregateLikes;
+                      _isAscending = !_isAscending;
+                    });
+                    _updateFilteredMeals();
+                  },
+                  child: Row(
+                    children: [
+                      const Text('Likes'),
+                      Icon(
+                        _sortAttribute == MealSortAttribute.aggregateLikes
+                            ? (_isAscending
+                                ? Icons.arrow_downward
+                                : Icons.arrow_upward)
+                            : null,
+                      ),
+                    ],
                   ),
-                  CheckedPopupMenuItem(
-                    checked: _isVeganFilterEnabled,
-                    value: 'Vegan',
-                    child: const Text('Vegan'),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _sortAttribute = MealSortAttribute.healthScore;
+                      _isAscending = !_isAscending;
+                    });
+                    _updateFilteredMeals();
+                  },
+                  child: Row(
+                    children: [
+                      const Text('Health Score'),
+                      Icon(
+                        _sortAttribute == MealSortAttribute.healthScore
+                            ? (_isAscending
+                                ? Icons.arrow_downward
+                                : Icons.arrow_upward)
+                            : null,
+                      ),
+                    ],
                   ),
-                  CheckedPopupMenuItem(
-                    checked: _isGlutenFreeFilterEnabled,
-                    value: 'Gluten Free',
-                    child: const Text('Gluten Free'),
-                  ),
-                  CheckedPopupMenuItem(
-                    checked: _isDairyFreeFilterEnabled,
-                    value: 'Dairy Free',
-                    child: const Text('Dairy Free'),
-                  ),
-                  CheckedPopupMenuItem(
-                    checked: _isVeryHealthyFilterEnabled,
-                    value: 'Very Healthy',
-                    child: const Text('Very Healthy'),
-                  ),
-                  CheckedPopupMenuItem(
-                    checked: _isCheapFilterEnabled,
-                    value: 'Cheap',
-                    child: const Text('Cheap'),
-                  ),
-                  CheckedPopupMenuItem(
-                    checked: _isVeryPopularFilterEnabled,
-                    value: 'Very Popular',
-                    child: const Text('Very Popular'),
-                  ),
-                  CheckedPopupMenuItem(
-                    checked: _isSustainableFilterEnabled,
-                    value: 'Sustainable',
-                    child: const Text('Sustainable'),
-                  ),
-                ],
-                onSelected: (String filter) {
-                  setState(() {
-                    switch (filter) {
-                      case 'Vegetarian':
-                        _isVegetarianFilterEnabled =
-                            !_isVegetarianFilterEnabled;
-                        break;
-                      case 'Vegan':
-                        _isVeganFilterEnabled = !_isVeganFilterEnabled;
-                        break;
-                      case 'Gluten Free':
-                        _isGlutenFreeFilterEnabled =
-                            !_isGlutenFreeFilterEnabled;
-                        break;
-                      case 'Dairy Free':
-                        _isDairyFreeFilterEnabled = !_isDairyFreeFilterEnabled;
-                        break;
-                      case 'Very Healthy':
-                        _isVeryHealthyFilterEnabled =
-                            !_isVeryHealthyFilterEnabled;
-                        break;
-                      case 'Cheap':
-                        _isCheapFilterEnabled = !_isCheapFilterEnabled;
-                        break;
-                      case 'Very Popular':
-                        _isVeryPopularFilterEnabled =
-                            !_isVeryPopularFilterEnabled;
-                        break;
-                      case 'Sustainable':
-                        _isSustainableFilterEnabled =
-                            !_isSustainableFilterEnabled;
-                        break;
-                    }
-                  });
-                },
-              ),
-            ],
+                ),
+                IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return StatefulBuilder(
+                          builder: (context, setState) {
+                            return SizedBox(
+                              height: 300,
+                              child: SingleChildScrollView(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    CheckboxListTile(
+                                      title: const Text('Vegetarian'),
+                                      value: _isVegetarianFilterEnabled,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _isVegetarianFilterEnabled = value!;
+                                        });
+                                        _updateFilteredMeals();
+                                      },
+                                    ),
+                                    CheckboxListTile(
+                                      title: const Text('Vegan'),
+                                      value: _isVeganFilterEnabled,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _isVeganFilterEnabled = value!;
+                                        });
+                                        _updateFilteredMeals();
+                                      },
+                                    ),
+                                    CheckboxListTile(
+                                      title: const Text('Gluten Free'),
+                                      value: _isGlutenFreeFilterEnabled,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _isGlutenFreeFilterEnabled = value!;
+                                        });
+                                        _updateFilteredMeals();
+                                      },
+                                    ),
+                                    CheckboxListTile(
+                                      title: const Text('Dairy Free'),
+                                      value: _isDairyFreeFilterEnabled,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _isDairyFreeFilterEnabled = value!;
+                                        });
+                                        _updateFilteredMeals();
+                                      },
+                                    ),
+                                    CheckboxListTile(
+                                      title: const Text('Very Healthy'),
+                                      value: _isVeryHealthyFilterEnabled,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _isVeryHealthyFilterEnabled = value!;
+                                        });
+                                        _updateFilteredMeals();
+                                      },
+                                    ),
+                                    CheckboxListTile(
+                                      title: const Text('Cheap'),
+                                      value: _isCheapFilterEnabled,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _isCheapFilterEnabled = value!;
+                                        });
+                                        _updateFilteredMeals();
+                                      },
+                                    ),
+                                    CheckboxListTile(
+                                      title: const Text('Very Popular'),
+                                      value: _isVeryPopularFilterEnabled,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _isVeryPopularFilterEnabled = value!;
+                                        });
+                                        _updateFilteredMeals();
+                                      },
+                                    ),
+                                    CheckboxListTile(
+                                      title: const Text('Sustainable'),
+                                      value: _isSustainableFilterEnabled,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _isSustainableFilterEnabled = value!;
+                                        });
+                                        _updateFilteredMeals();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.filter_alt),
+                ),
+              ],
+            ),
           ),
           Expanded(
-            child: ListView.separated(
+            child: ListView.builder(
               controller: _scrollController,
-              separatorBuilder: (context, index) => const Divider(height: 1),
+              physics: const ClampingScrollPhysics(),
               itemCount: filteredMeals.length,
               itemBuilder: (context, index) {
                 final meal = filteredMeals[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: ListTile(
-                    leading: Container(
-                      width: 80,
-                      height: 80,
-                      margin: const EdgeInsets.only(right: 16),
-                      child: Image.network(
-                        meal.image ?? '',
-                        fit: BoxFit.cover,
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => RecipeScreen(meal.id)));
+                  },
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.network(
+                                meal.image!,
+                                height: 80,
+                                width: 80,
+                                fit: BoxFit.cover,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  meal.title!,
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Icon(Icons.timer,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                              const SizedBox(width: 5),
+                              Text('${meal.readyInMinutes} min'),
+                              const SizedBox(width: 20),
+                              Icon(Icons.local_fire_department,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                              const SizedBox(width: 5),
+                              Text('${meal.aggregateLikes} likes'),
+                              const SizedBox(width: 20),
+                              Icon(Icons.emoji_food_beverage_outlined,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                              const SizedBox(width: 5),
+                              Text('${meal.healthScore}%'),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    title: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            meal.title ?? 'No Title',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        if (meal.veryPopular != null && meal.veryPopular!)
-                          Container(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: const Icon(Icons.star,
-                                size: 20, color: Colors.yellow),
-                          ),
-                      ],
-                    ),
-                    subtitle: Text(_getSubtitle(meal, _sortAttribute),
-                        style: const TextStyle(fontSize: 12)),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              RecipeScreen(meal.id),
-                        ),
-                      );
-                    },
                   ),
                 );
               },
@@ -260,15 +345,16 @@ class _MealListViewState extends State<MealListView> {
     );
   }
 
-  String _getSubtitle(Recipe meal, MealSortAttribute sortAttribute) {
-    switch (sortAttribute) {
-      case MealSortAttribute.aggregateLikes:
-        return '${meal.aggregateLikes} Total Likes';
-      case MealSortAttribute.healthScore:
-        return 'Health Score: ${meal.healthScore}';
-      case MealSortAttribute.readyInMinutes:
-      default:
-        return 'Ready in ${meal.readyInMinutes} minutes';
-    }
+  Widget _buildFilterButton(
+      String text, bool isSelected, VoidCallback onPressed) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      child: Row(
+        children: [
+          Text(text),
+          if (isSelected) const Icon(Icons.check),
+        ],
+      ),
+    );
   }
 }

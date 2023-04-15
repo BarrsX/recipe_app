@@ -1,12 +1,14 @@
-import 'package:recipe_app/src/features/home/presentation/bloc/home_bloc.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../recipe/presentation/recipe_screen.dart';
+import '../../auth/data/repository/auth_repository.dart';
+import '../../auth/presentation/bloc/auth_bloc.dart';
+import '../../auth/presentation/bloc/auth_event.dart';
 import '../../recipe/domain/models/recipe.dart';
-
-import 'widgets/search_field.dart';
+import 'bloc/home_bloc.dart';
 import 'widgets/meal_list_view.dart';
+import 'widgets/search_field.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,10 +19,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final HomeBloc _homeBloc = HomeBloc();
+  late HomeBloc _homeBloc = HomeBloc();
+  late AuthenticationRepository _authRepository;
+  late AuthenticationBloc _authBloc =
+      AuthenticationBloc(repository: _authRepository);
 
   @override
   void initState() {
+    _authRepository = AuthenticationRepository();
     _homeBloc.loadOrSearchMeals();
     super.initState();
   }
@@ -45,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.home),
             onPressed: onPressHome,
           ),
+            backgroundColor: Theme.of(context).primaryColor,
           title: SearchField(
             searchController: _searchController,
             homeBloc: _homeBloc,
@@ -124,12 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
         endDrawer: Drawer(
           child: ListView(
             children: [
-              const ListTile(
+              ListTile(
                 title: Text('Menu',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold)),
+                    style: Theme.of(context).textTheme.titleLarge),
               ),
               ListTile(
                 leading: const Icon(Icons.shuffle_rounded),
@@ -137,6 +141,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   _homeBloc.resetSearch();
                   Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Sign out'),
+                onTap: () async {
+                  if (_authBloc.isClosed) {
+                    _authBloc.add(AuthenticationLoggedOut());
+                  }
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login',
+                    (_) => false,
+                  );
                 },
               ),
             ],

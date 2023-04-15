@@ -1,4 +1,5 @@
 import 'package:rxdart/rxdart.dart';
+
 import '../../../recipe/domain/models/recipe.dart';
 import '../../data/repository/home_repository.dart';
 
@@ -14,15 +15,23 @@ class HomeBloc {
   final BehaviorSubject<bool> ascendingOrder =
       BehaviorSubject<bool>.seeded(true);
 
-  /// Get the list of suggestions for the search query
-  Future<Iterable<String>> getSuggestionList(String query) async {
-    return await _homeRepository.getSuggestionList(query);
+  /// Dispose the streams
+  void dispose() {
+    suggestionList.close();
+    meals.close();
+    isLoading.close();
+    isError.close();
+    ascendingOrder.close();
   }
 
-  /// Load or search meals from the API based on the query
-  Future<void> loadOrSearchMeals([String query = '']) async {
-    await _homeRepository.loadOrSearchMeals(
-        query, meals, isLoading, isError, ascendingOrder);
+  /// Get the list of suggestions for the search query
+  Future<Iterable<String>> getSuggestionList(String query) async {
+    final data = await _homeRepository.getSuggestionList(query);
+    final result = data['result'] as List<dynamic>;
+    final suggestions = result != null
+        ? result.map((obj) => obj['title'] as String).toList()
+        : [];
+    return suggestions as Iterable<String>;
   }
 
   /// Load more meals from the API
@@ -39,6 +48,32 @@ class HomeBloc {
       print('Error while loading more meals: $error');
       isError.add(true);
     }
+  }
+
+  /// Load or search meals from the API based on the query
+  Future<void> loadOrSearchMeals([String query = '']) async {
+    isLoading.add(true);
+    isError.add(false);
+
+    String mealKey = query.isEmpty ? 'recipes' : 'results';
+    final data = await _homeRepository.loadOrSearchMeals(
+        query, meals, isLoading, isError, ascendingOrder);
+
+    List<Recipe> mealsList = (data['result'][mealKey] as List)
+        .map((mealJson) => Recipe.fromJson(mealJson))
+        .toList();
+
+    if (!meals.isClosed) {
+      meals.add(mealsList);
+    }
+
+    if (!isLoading.isClosed) {
+      isLoading.add(false);
+    }
+
+    ascendingOrder.value
+        ? sortMeals(mealsList, 'asc')
+        : sortMeals(mealsList, 'dsc');
   }
 
   /// Reset the search
@@ -62,15 +97,8 @@ class HomeBloc {
       });
     }
 
-    meals.add(mealsList);
-  }
-
-  /// Dispose the streams
-  void dispose() {
-    suggestionList.close();
-    meals.close();
-    isLoading.close();
-    isError.close();
-    ascendingOrder.close();
+    if (!meals.isClosed) {
+      meals.add(mealsList);
+    }
   }
 }

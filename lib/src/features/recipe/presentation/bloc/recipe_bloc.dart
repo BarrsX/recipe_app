@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/repository/recipe_repository.dart';
@@ -16,7 +17,8 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   void mapLoadRecipeEventToState(LoadRecipeEvent event, Emitter emit) async {
     emit(RecipeLoadingState());
     try {
-      Recipe recipe = await _recipeRepository.getRecipeById(event.mealId);
+      final data = await _recipeRepository.getRecipeById(event.mealId);
+      Recipe recipe = Recipe.fromJson(data['result']);
 
       emit(RecipeLoadedState(
           recipe: recipe,
