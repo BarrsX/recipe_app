@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+
 import '../../../recipe/domain/models/recipe.dart';
 import '../../../recipe/presentation/recipe_screen.dart';
 import '../bloc/home_bloc.dart';
@@ -90,7 +90,7 @@ class _MealListViewState extends State<MealListView> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        await widget.homeBloc.loadOrSearchMeals();
+        widget.homeBloc.loadOrSearchMeals();
         _updateFilteredMeals();
       },
       child: Column(

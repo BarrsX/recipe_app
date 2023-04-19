@@ -28,7 +28,7 @@ class HomeBloc {
   Future<Iterable<String>> getSuggestionList(String query) async {
     final data = await _homeRepository.getSuggestionList(query);
     final result = data['result'] as List<dynamic>;
-    final suggestions = result != null
+    final suggestions = result.isNotEmpty
         ? result.map((obj) => obj['title'] as String).toList()
         : [];
     return suggestions as Iterable<String>;
@@ -39,7 +39,7 @@ class HomeBloc {
     try {
       final List<Recipe> newMeals = await _homeRepository.getMoreMeals();
 
-      final List<Recipe> currentMeals = meals.value ?? [];
+      final List<Recipe> currentMeals = meals.value;
       final List<Recipe> updatedMeals = [...currentMeals, ...newMeals];
       meals.add(updatedMeals);
 
@@ -67,38 +67,14 @@ class HomeBloc {
       meals.add(mealsList);
     }
 
-    if (!isLoading.isClosed) {
-      isLoading.add(false);
-    }
-
-    ascendingOrder.value
-        ? sortMeals(mealsList, 'asc')
-        : sortMeals(mealsList, 'dsc');
+    isLoading.add(false);
   }
 
   /// Reset the search
   void resetSearch() {
     meals.add([]);
-    isLoading.add(true);
     isError.add(false);
-
+    isLoading.add(false);
     loadOrSearchMeals();
-  }
-
-  /// Sort the meals based on the order
-  void sortMeals(List<Recipe> mealsList, String order) {
-    if (order == 'asc') {
-      mealsList.sort((a, b) {
-        return a.readyInMinutes?.compareTo(b.readyInMinutes as int) as int;
-      });
-    } else {
-      mealsList.sort((a, b) {
-        return b.readyInMinutes?.compareTo(a.readyInMinutes as int) as int;
-      });
-    }
-
-    if (!meals.isClosed) {
-      meals.add(mealsList);
-    }
   }
 }

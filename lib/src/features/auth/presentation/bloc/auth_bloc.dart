@@ -8,13 +8,11 @@ import '../../data/repository/auth_repository.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final AuthenticationRepository _repository;
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   StreamSubscription<User?>? _authenticationStreamSubscription;
+  final AuthenticationRepository _repository;
 
-  AuthenticationBloc({required AuthenticationRepository repository})
-      : _repository = repository,
+  AuthenticationBloc({AuthenticationRepository? repository}) : _repository = repository ?? AuthenticationRepository(),
         super(AuthenticationInitial()) {
     on<AuthenticationStarted>(_authenticationStarted);
     on<AuthenticationLoggedOut>(_authenticationLoggedOut);

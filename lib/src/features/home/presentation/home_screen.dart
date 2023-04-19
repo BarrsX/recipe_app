@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../auth/data/repository/auth_repository.dart';
-import '../../auth/presentation/bloc/auth_bloc.dart';
 import '../../auth/presentation/bloc/auth_event.dart';
+import '../../auth/presentation/bloc/auth_bloc.dart';
+
 import '../../recipe/domain/models/recipe.dart';
-import 'bloc/home_bloc.dart';
+
 import 'widgets/meal_list_view.dart';
 import 'widgets/search_field.dart';
+
+import 'bloc/home_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -18,15 +20,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late final AuthenticationBloc _authBloc = AuthenticationBloc();
   final TextEditingController _searchController = TextEditingController();
-  late HomeBloc _homeBloc = HomeBloc();
-  late AuthenticationRepository _authRepository;
-  late AuthenticationBloc _authBloc =
-      AuthenticationBloc(repository: _authRepository);
+  late final HomeBloc _homeBloc = HomeBloc();
 
   @override
   void initState() {
-    _authRepository = AuthenticationRepository();
     _homeBloc.loadOrSearchMeals();
     super.initState();
   }
@@ -37,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void onPressHome() {
+  void _onPressHome() {
     _homeBloc.resetSearch();
     _searchController.clear();
   }
@@ -49,13 +48,13 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.home),
-            onPressed: onPressHome,
+            onPressed: _onPressHome,
           ),
-            backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).primaryColor,
           title: SearchField(
             searchController: _searchController,
             homeBloc: _homeBloc,
-            onHomePressed: onPressHome,
+            onHomePressed: _onPressHome,
           ),
           actions: [
             Builder(builder: (context) {
@@ -84,18 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 } else {
                   return const Center(child: Text('No Results Found'));
-                }
-              },
-            ),
-            StreamBuilder(
-              stream: _homeBloc.isLoading,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data!) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else {
-                  return Container();
                 }
               },
             ),
@@ -132,8 +119,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListView(
             children: [
               ListTile(
-                title: Text('Menu',
-                    style: Theme.of(context).textTheme.titleLarge),
+                title:
+                    Text('Menu', style: Theme.of(context).textTheme.titleLarge),
               ),
               ListTile(
                 leading: const Icon(Icons.shuffle_rounded),
@@ -147,9 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 leading: const Icon(Icons.logout),
                 title: const Text('Sign out'),
                 onTap: () async {
-                  if (_authBloc.isClosed) {
-                    _authBloc.add(AuthenticationLoggedOut());
-                  }
+                  _authBloc.add(AuthenticationLoggedOut());
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     '/login',

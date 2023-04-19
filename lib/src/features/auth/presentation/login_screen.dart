@@ -1,9 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:recipe_app/src/features/home/presentation/home_screen.dart';
-import 'bloc/auth_event.dart';
+
+import '../../home/presentation/home_screen.dart';
+
 import 'bloc/auth_state.dart';
+import 'bloc/auth_event.dart';
 import 'bloc/auth_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,12 +13,15 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
+  late final AuthenticationBloc _authBloc;
   final _passwordController = TextEditingController();
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: [
-    'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
-  ]);
+  final _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    _authBloc = BlocProvider.of<AuthenticationBloc>(context);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -35,13 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
                 'Authentication Failed: ${state.errorMessage}',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
                 ),
               ),
-              backgroundColor: Colors.red[700],
+              backgroundColor: Theme.of(context).primaryColor,
             ));
-          } else if (state is AuthenticationGoogleSignInSucceeded) {
+          } else if (state is AuthenticationGoogleSignInSucceeded ||
+              state is AuthenticationSucceeded) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
@@ -109,12 +114,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 24.0),
                     ElevatedButton.icon(
                       onPressed: () {
-                        context
-                            .read<AuthenticationBloc>()
-                            .add(AuthenticationStarted(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                            ));
+                        _authBloc.add(AuthenticationStarted(
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                        ));
                       },
                       icon: const Icon(
                         Icons.login,
@@ -173,9 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16.0),
                     ElevatedButton.icon(
                       onPressed: () async {
-                        context
-                            .read<AuthenticationBloc>()
-                            .add(AuthenticationGoogleSignInRequested());
+                        _authBloc.add(AuthenticationGoogleSignInRequested());
                       },
                       icon: Image.asset(
                         'assets/images/google_logo.png',
@@ -194,7 +195,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[900],
-                        // Use custom font for button text
                         textStyle: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0,
