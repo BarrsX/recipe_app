@@ -25,6 +25,23 @@ class AuthenticationRepository {
     }
   }
 
+  Future<void> logOut() async {
+    await _firebaseAuth.signOut();
+  }
+
+  Future<User?> logInWithEmailAndPassword(String email, String password) async {
+    try {
+      final UserCredential userCredential =
+          await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential.user;
+    } on FirebaseAuthException catch (authException) {
+      throw Exception(authException.message);
+    }
+  }
+
   Future<User?> signUpWithEmailAndPassword(
       String email, String password) async {
     try {
@@ -44,23 +61,6 @@ class AuthenticationRepository {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
       throw Exception('Failed to sign out: $e');
-    }
-  }
-
-  Future<void> logOut() async {
-    await _firebaseAuth.signOut();
-  }
-
-  Future<User?> logInWithEmailAndPassword(String email, String password) async {
-    try {
-      final UserCredential userCredential =
-          await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      return userCredential.user;
-    } on FirebaseAuthException catch (authException) {
-      throw Exception(authException.message);
     }
   }
 

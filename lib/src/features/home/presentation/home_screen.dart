@@ -1,7 +1,7 @@
+import '../../user/presentation/bloc/user_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../auth/data/repository/auth_repository.dart';
 import '../../auth/presentation/bloc/auth_event.dart';
 import '../../auth/presentation/bloc/auth_bloc.dart';
 
@@ -21,8 +21,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final AuthenticationBloc _authBloc = AuthenticationBloc();
+  late final UserBloc _userBloc = UserBloc();
   final TextEditingController _searchController = TextEditingController();
   late final HomeBloc _homeBloc = HomeBloc();
+  late User? loggedInUser = _userBloc.getUser();
 
   @override
   void initState() {
@@ -119,8 +121,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListView(
             children: [
               ListTile(
-                title:
-                    Text('Menu', style: Theme.of(context).textTheme.titleLarge),
+                title: Text('Hi, ${loggedInUser?.displayName ?? "User"}!',
+                    style: Theme.of(context).textTheme.titleLarge),
               ),
               ListTile(
                 leading: const Icon(Icons.shuffle_rounded),
