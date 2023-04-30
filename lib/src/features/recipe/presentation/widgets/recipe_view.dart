@@ -1,14 +1,12 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/models/extended_ingredient.dart';
 import '../../domain/models/recipe.dart';
 import '../../domain/models/step.dart';
-
+import '../bloc/recipe_bloc.dart';
 import '../bloc/recipe_event.dart';
 import '../bloc/recipe_state.dart';
-import '../bloc/recipe_bloc.dart';
-
 import '../recipe_screen.dart';
 
 class RecipeView extends StatefulWidget {
