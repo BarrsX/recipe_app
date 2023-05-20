@@ -1,5 +1,5 @@
 PODS:
-  - cloud_functions (4.1.0):
+  - cloud_functions (4.1.1):
     - Firebase/CoreOnly (~> 10.7.0)
     - Firebase/Functions (~> 10.7.0)
     - firebase_core
@@ -12,12 +12,12 @@ PODS:
   - Firebase/Functions (10.7.0):
     - Firebase/CoreOnly
     - FirebaseFunctions (~> 10.7.0)
-  - firebase_auth (4.2.2):
+  - firebase_auth (4.4.2):
     - Firebase/Auth (~> 10.7.0)
     - Firebase/CoreOnly (~> 10.7.0)
     - firebase_core
     - FlutterMacOS
-  - firebase_core (2.9.0):
+  - firebase_core (2.10.0):
     - Firebase/CoreOnly (~> 10.7.0)
     - FlutterMacOS
   - FirebaseAppCheckInterop (10.7.0)
@@ -113,10 +113,10 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/sqflite/macos
 
 SPEC CHECKSUMS:
-  cloud_functions: a471c0a155e0fb5209ee5fca040673690cea6a97
+  cloud_functions: 58f7c7c7b826c747a0f75538bd4803bb1946b02f
   Firebase: 0219acf760880eeec8ce479895bd7767466d9f81
-  firebase_auth: 17cfc59032b5eb896ecac74dd1708c16ce8e9705
-  firebase_core: b2f73bfbb070109d2149e257a786e3093f99a9da
+  firebase_auth: 614958abbcd2eebbafbbd9b4eb9943238e9ab1b9
+  firebase_core: 104c957652eab7d9d9c779102f509714a56ad382
   FirebaseAppCheckInterop: 8e907eea79958960a8bd2058e067f31e03a7914b
   FirebaseAuth: dd64c01631df724b09f33e584625775c52f7d71f
   FirebaseAuthInterop: 5ea2a68b83f5222f6d8688ffc3a49a9e92bb3eba
@@ -136,4 +136,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 353c8bcc5d5b0994e508d035b5431cfe18c1dea7
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.12.1

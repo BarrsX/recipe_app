@@ -42,6 +42,32 @@ class AuthenticationRepository {
     }
   }
 
+  Future<UserCredential?> signInWithApple(
+      String idToken, String accessToken) async {
+    try {
+      final OAuthCredential credential = OAuthProvider('apple.com').credential(
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+
+      UserCredential userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Perform any additional setup/sign up here if necessary
+
+        return userCredential;
+      } else {
+        throw Exception("Error signing in with Apple credentials");
+      }
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   Future<User?> signUpWithEmailAndPassword(
       String email, String password) async {
     try {

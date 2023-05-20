@@ -20,6 +20,9 @@ class SearchField extends StatelessWidget {
     return TypeAheadField(
       textFieldConfiguration: TextFieldConfiguration(
         controller: searchController,
+        style: const TextStyle(
+          color: Colors.black,
+        ),
         decoration: InputDecoration(
           hintText: 'Search meals',
           hintStyle: const TextStyle(
