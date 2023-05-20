@@ -10,8 +10,8 @@ export const loadOrSearchMeals = functions.https.onCall(async (data, context) =>
   const query: string = data.query || '' as string;
   let url =
   query === '' ?
-    `https://api.spoonacular.com/recipes/random?number=15&addRecipeInformation=true&apiKey=${SPOONACULAR_API_KEY}` :
-    `https://api.spoonacular.com/recipes/complexSearch?query=${query}&addRecipeInformation=true&apiKey=${SPOONACULAR_API_KEY}`;
+    `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random?number=15&addRecipeInformation=true&ranking=2&rapidapi-key=${SPOONACULAR_API_KEY}` :
+    `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch?query=${query}&addRecipeInformation=true&rapidapi-key=${SPOONACULAR_API_KEY}`;
 
   url = url.replace(/[';]/g, '');
 

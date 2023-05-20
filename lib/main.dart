@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     final AuthenticationBloc authenticationBloc =
         AuthenticationBloc(repository: authenticationRepository);
     authenticationBloc.stream.listen((state) {
-      if (state is AuthenticationSucceeded) {
+      if (state is AuthenticationSucceeded || state is AuthenticationGoogleSignInSucceeded) {
         navigatorKey.currentState!.pushReplacementNamed('/home');
       }
     });

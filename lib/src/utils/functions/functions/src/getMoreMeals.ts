@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 const {SPOONACULAR_API_KEY} = process.env;
 
 export const getMoreMeals = functions.https.onCall(async (data, context) => {
-  let url = `https://api.spoonacular.com/recipes/random?number=10&addRecipeInformation=true&apiKey=${SPOONACULAR_API_KEY}`;
+  let url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random?number=10&addRecipeInformation=true&rapidapi-key=${SPOONACULAR_API_KEY}`;
 
   url = url.replace(/[';]/g, '');
 

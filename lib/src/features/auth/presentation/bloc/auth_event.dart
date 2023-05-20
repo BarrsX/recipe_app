@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 
 abstract class AuthenticationEvent extends Equatable {
   const AuthenticationEvent();
@@ -39,3 +40,30 @@ class AuthenticationStatusChanged extends AuthenticationEvent {
 }
 
 class AuthenticationGoogleSignInRequested extends AuthenticationEvent {}
+
+class AuthenticationPhoneNumberRequested extends AuthenticationEvent {
+  final String phoneNumber;
+  final BuildContext context;
+
+  AuthenticationPhoneNumberRequested({required this.phoneNumber, required this.context});
+}
+
+class AuthenticationPhoneCodeEntered extends AuthenticationEvent {
+  final String code;
+  final String? verificationId;
+
+  AuthenticationPhoneCodeEntered({required this.code, this.verificationId});
+}
+
+class AuthenticationCodeEntered extends AuthenticationEvent {
+  final String verificationId;
+  final String code;
+
+  const AuthenticationCodeEntered({
+    required this.verificationId,
+    required this.code,
+  });
+
+  @override
+  List<Object> get props => [verificationId, code];
+}

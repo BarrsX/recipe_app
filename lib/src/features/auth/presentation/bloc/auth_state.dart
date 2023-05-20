@@ -68,3 +68,44 @@ class AuthenticationGoogleSignInSucceeded extends AuthenticationState {
 
 class AuthenticationGoogleSignInInProgress extends AuthenticationState {}
 
+class AuthenticationAppleSignInFailed extends AuthenticationState {
+  final String errorMessage;
+
+  const AuthenticationAppleSignInFailed({required this.errorMessage});
+
+  @override
+  List<Object> get props => [errorMessage];
+}
+
+// class AuthenticationAppleSignInSucceeded extends AuthenticationState {
+//   final User user;
+
+//   const AuthenticationAppleSignInSucceeded({required this.user});
+
+//   @override
+//   List<Object> get props => [user];
+// }
+
+// class AuthenticationAppleSignInInProgress extends AuthenticationState {}
+
+class AuthenticationPhoneNumberFailed extends AuthenticationState {
+  final String errorMessage;
+
+  const AuthenticationPhoneNumberFailed({required this.errorMessage});
+}
+
+class PhoneAuthStateCodeSent extends AuthenticationState {
+  final String verificationId;
+  final int? resendToken;
+  final String phoneNumber;
+
+  const PhoneAuthStateCodeSent(
+      {required this.verificationId,
+      this.resendToken,
+      required this.phoneNumber});
+}
+
+class PhoneAuthStateCodeEntered extends AuthenticationState {
+
+  const PhoneAuthStateCodeEntered();
+}

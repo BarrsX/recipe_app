@@ -9,7 +9,7 @@ const {SPOONACULAR_API_KEY} = process.env;
 export const getSuggestionList = functions.https.onCall(async (data, context) => {
   const query = data.query as string;
   console.log(query);
-  let url = `https://api.spoonacular.com/recipes/autocomplete?number=5&query=${query}&apiKey=${SPOONACULAR_API_KEY}`;
+  let url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/autocomplete?number=5&query=${query}&rapidapi-key=${SPOONACULAR_API_KEY}`;
 
   url = url.replace(/[';]/g, '');
 

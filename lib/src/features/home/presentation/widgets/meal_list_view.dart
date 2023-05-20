@@ -9,9 +9,14 @@ enum MealSortAttribute { readyInMinutes, aggregateLikes, healthScore, none }
 class MealListView extends StatefulWidget {
   final List<Recipe> meals;
   final HomeBloc homeBloc;
+  final Stream<List<Recipe>> searchMeals;
 
-  const MealListView({Key? key, required this.meals, required this.homeBloc})
-      : super(key: key);
+  const MealListView({
+    Key? key,
+    required this.meals,
+    required this.homeBloc,
+    required this.searchMeals,
+  }) : super(key: key);
 
   @override
   _MealListViewState createState() => _MealListViewState();
@@ -35,6 +40,14 @@ class _MealListViewState extends State<MealListView> {
   void initState() {
     super.initState();
     filteredMeals = widget.meals;
+    widget.searchMeals.listen((meals) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        filteredMeals = meals;
+      });
+    });
     _scrollController.addListener(() {
       if (_scrollController.position.maxScrollExtent ==
           _scrollController.offset) {
@@ -47,7 +60,7 @@ class _MealListViewState extends State<MealListView> {
   List<Recipe> filteredMeals = [];
 
   void _updateFilteredMeals() {
-    filteredMeals = widget.meals.where((meal) {
+    filteredMeals = filteredMeals.where((meal) {
       return (!_isVegetarianFilterEnabled || meal.vegetarian == true) &&
           (!_isVeganFilterEnabled || meal.vegan == true) &&
           (!_isGlutenFreeFilterEnabled || meal.glutenFree == true) &&

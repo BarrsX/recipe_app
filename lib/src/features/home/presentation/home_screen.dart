@@ -78,7 +78,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     snapshot.data != null &&
                     snapshot.data!.isNotEmpty) {
                   return MealListView(
-                      meals: snapshot.data!, homeBloc: _homeBloc);
+                      meals: snapshot.data!,
+                      homeBloc: _homeBloc,
+                      searchMeals: _homeBloc.searchMeals);
                 } else if (_homeBloc.isLoading.value) {
                   return const Center(
                     child: CircularProgressIndicator(),

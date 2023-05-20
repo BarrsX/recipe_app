@@ -1,11 +1,9 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../home/presentation/home_screen.dart';
-
-import 'bloc/auth_state.dart';
-import 'bloc/auth_event.dart';
 import 'bloc/auth_bloc.dart';
+import 'bloc/auth_event.dart';
+import 'bloc/auth_state.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -14,8 +12,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   late final AuthenticationBloc _authBloc;
-  final _passwordController = TextEditingController();
-  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final GlobalKey enterCodeScreenKey = GlobalKey();
+  String? verificationId;
+  AuthenticationState state = AuthenticationInitial();
 
   @override
   void initState() {
@@ -25,8 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -38,18 +37,17 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is AuthenticationFailed) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
-                'Authentication Failed: ${state.errorMessage}',
+                'Phone authentication failed: ${state.errorMessage}',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.error,
                 ),
               ),
               backgroundColor: Theme.of(context).primaryColor,
             ));
-          } else if (state is AuthenticationGoogleSignInSucceeded ||
-              state is AuthenticationSucceeded) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
+          } else if (state is PhoneAuthStateCodeSent) {
+            setState(() {
+              verificationId = state.verificationId;
+            });
           }
         },
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -78,29 +76,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 24.0),
                     TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
                       decoration: const InputDecoration(
-                        labelText: 'Email',
+                        labelText: 'Phone Number',
                         icon: Icon(
-                          Icons.email,
-                          color: Colors.white,
-                        ),
-                        labelStyle: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        icon: Icon(
-                          Icons.lock,
+                          Icons.phone,
                           color: Colors.white,
                         ),
                         labelStyle: TextStyle(
@@ -113,11 +94,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 24.0),
                     ElevatedButton.icon(
-                      onPressed: () {
-                        _authBloc.add(AuthenticationStarted(
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                        ));
+                      onPressed: () async {
+                        String phoneNumber = _phoneController.text.trim();
+                        _authBloc.add(AuthenticationPhoneNumberRequested(
+                            phoneNumber: phoneNumber, context: context));
                       },
                       icon: const Icon(
                         Icons.login,
@@ -147,19 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(
                           vertical: 16.0,
                           horizontal: 32.0,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    TextButton(
-                      onPressed: () {
-                        // TODO: implement forgot password functionality
-                      },
-                      child: const Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),

@@ -12,7 +12,7 @@ const {SPOONACULAR_API_KEY} = process.env;
 export const getRecipeById = functions.https.onCall(async (data, context) => {
   const mealId: string = data.mealId as string;
 
-  let url = `https://api.spoonacular.com/recipes/${mealId}/information?apiKey=${SPOONACULAR_API_KEY}`;
+  let url = `https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${mealId}/information?rapidapi-key=${SPOONACULAR_API_KEY}`;
 
   url = url.replace(/[';]/g, '');
 

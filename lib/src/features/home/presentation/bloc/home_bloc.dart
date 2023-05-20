@@ -14,6 +14,8 @@ class HomeBloc {
   final BehaviorSubject<bool> isError = BehaviorSubject<bool>.seeded(false);
   final BehaviorSubject<bool> ascendingOrder =
       BehaviorSubject<bool>.seeded(true);
+  final BehaviorSubject<List<Recipe>> searchMeals =
+      BehaviorSubject<List<Recipe>>.seeded([]);
 
   /// Dispose the streams
   void dispose() {
@@ -22,10 +24,15 @@ class HomeBloc {
     isLoading.close();
     isError.close();
     ascendingOrder.close();
+    searchMeals.close();
   }
 
   /// Get the list of suggestions for the search query
   Future<Iterable<String>> getSuggestionList(String query) async {
+    if (query.isEmpty) {
+      return [];
+    }
+
     final data = await _homeRepository.getSuggestionList(query);
     final result = data['result'] as List<dynamic>;
     final suggestions = result.isNotEmpty
@@ -62,6 +69,7 @@ class HomeBloc {
     List<Recipe> mealsList = (data['result'][mealKey] as List)
         .map((mealJson) => Recipe.fromJson(mealJson))
         .toList();
+    searchMeals.add(mealsList);
 
     if (!meals.isClosed) {
       meals.add(mealsList);
